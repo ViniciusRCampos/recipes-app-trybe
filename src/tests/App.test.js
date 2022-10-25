@@ -1,9 +1,9 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import App from '../App';
 import Header from '../components/Header';
 import renderWithRouter from '../helpers/renderWithRouter';
+import App from '../App';
 
 describe('If component Login works properly', () => {
   it('Check login functions', async () => {
@@ -33,4 +33,8 @@ describe('If component Header works properly', () => {
     fireEvent.keyDown(input, { keyCode: 13 });
     expect(input).not.toContain();
   });
+});
+
+describe('check footer', () => {
+
 });
