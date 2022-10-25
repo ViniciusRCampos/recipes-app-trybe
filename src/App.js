@@ -16,10 +16,10 @@ function App() {
         <Switch>
           <Route exact path="/" component={ Login } />
           <Route path="/meals" component={ Meals } />
-          {/* <Route exact path="/meals/:id" component={ Home } /> */}
+          <Route exact path="/meals/:id" component={ Favorites } />
           {/* <Route exact path="/meals/:id/in-progress" component={ Home } /> */}
           <Route exact path="/drinks" component={ Drinks } />
-          <Route exact path="/drinks/:id" component={ Drinks } />
+          <Route exact path="/drinks/:id" component={ Favorites } />
           {/* <Route exact path="/drinks/:id/in-progress" component={ Home } /> */}
           <Route exact path="/profile" component={ Profile } />
           <Route exact path="/done-recipes" component={ DoneRecipes } />

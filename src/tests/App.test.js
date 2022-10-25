@@ -4,6 +4,7 @@ import userEvent from '@testing-library/user-event';
 import App from '../App';
 import Header from '../components/Header';
 import renderWithRouter from '../helpers/renderWithRouter';
+import SearchBar from '../components/SearchBar';
 
 describe('If component Login works properly', () => {
   it('Check login functions', async () => {
@@ -23,11 +24,11 @@ describe('If component Login works properly', () => {
 
 describe('If component Header works properly', () => {
   it('check functionalities from header', async () => {
-    renderWithRouter(<Header />);
-    const btn = screen.getByRole('img', {
+    renderWithRouter(<SearchBar />);
+    const btn = screen.findByRole('img', {
       name: /search icon/i,
     });
-    const input = screen.getByTestId('search-top-btn');
+    const input = screen.findByTestId('search-top-btn');
     userEvent.click(btn);
     expect(input).toBeVisible();
     fireEvent.keyDown(input, { keyCode: 13 });
