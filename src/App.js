@@ -15,7 +15,7 @@ function App() {
       <MyProvider>
         <Switch>
           <Route exact path="/" render={ () => <Login /> } />
-          <Route path="/meals" render={ () => <Meals /> } />
+          <Route exact path="/meals" render={ () => <Meals /> } />
           <Route exact path="/meals/:id" render={ () => <DoneRecipes /> } />
           {/* <Route exact path="/meals/:id/in-progress" render={ Home } /> */}
           <Route exact path="/drinks" render={ () => <Drinks /> } />
