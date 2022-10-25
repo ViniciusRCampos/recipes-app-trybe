@@ -3,7 +3,6 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import App from '../App';
 import Header from '../components/Header';
-import Profile from '../pages/Profile';
 import renderWithRouter from '../helpers/renderWithRouter';
 
 describe('If component Login works properly', () => {
@@ -33,13 +32,5 @@ describe('If component Header works properly', () => {
     expect(input).toBeVisible();
     fireEvent.keyDown(input, { keyCode: 13 });
     expect(input).not.toContain();
-  });
-  it('checks if search input isnt loaded into another component', () => {
-    renderWithRouter(<Profile />);
-    const input = screen.getAllByRole('textbox', {
-      name: /pesquisar:/i,
-    });
-    console.log(input);
-    expect(input).not.toBeInTheDocument();
   });
 });
