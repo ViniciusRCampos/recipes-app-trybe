@@ -5,7 +5,6 @@ import Header from '../components/Header';
 import Footer from '../components/Footer';
 import RecipeCards from '../components/RecipeCards';
 
-
 function Drinks() {
   const route = useHistory();
   const { recipes } = useContext(MyContext);
