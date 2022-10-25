@@ -2,7 +2,9 @@ import React, { useContext } from 'react';
 import { useHistory } from 'react-router-dom';
 import MyContext from '../context/myContext';
 import Header from '../components/Header';
+import Footer from '../components/Footer';
 import RecipeCards from '../components/RecipeCards';
+
 
 function Drinks() {
   const route = useHistory();
@@ -28,6 +30,7 @@ function Drinks() {
             />
           ))
       }
+      <Footer />
     </div>
   );
 }

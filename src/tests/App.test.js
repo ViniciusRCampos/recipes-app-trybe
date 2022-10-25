@@ -1,9 +1,9 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import App from '../App';
 import Header from '../components/Header';
 import renderWithRouter from '../helpers/renderWithRouter';
+import App from '../App';
 import SearchBar from '../components/SearchBar';
 
 describe('If component Login works properly', () => {
