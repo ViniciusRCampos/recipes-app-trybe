@@ -4,6 +4,7 @@ import userEvent from '@testing-library/user-event';
 import App from '../App';
 import Header from '../components/Header';
 import renderWithRouter from '../helpers/renderWithRouter';
+import SearchBar from '../components/SearchBar';
 
 describe('If component Login works properly', () => {
   it('Check login functions', async () => {
@@ -32,5 +33,13 @@ describe('If component Header works properly', () => {
     expect(input).toBeVisible();
     fireEvent.keyDown(input, { keyCode: 13 });
     expect(input).not.toContain();
+  });
+  it('searchBar', async () => {
+    renderWithRouter(<SearchBar />);
+    const teste = screen.getByRole('textbox', {
+      name: /pesquisar:/i,
+    });
+    console.log(teste);
+    expect(teste).toBeInTheDocument();
   });
 });

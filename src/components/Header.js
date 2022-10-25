@@ -1,9 +1,12 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import PropTypes from 'prop-types';
+import MyContext from '../context/myContext';
 import profileIcon from '../images/profileIcon.svg';
 import searchIcon from '../images/searchIcon.svg';
+import SearchBar from './SearchBar';
 
 function Header({ title }) {
+  const { handleRadio, handleSearch, search, clickSearch } = useContext(MyContext);
   const [show, setShow] = useState(false);
 
   const path = window.location.pathname;
@@ -34,10 +37,12 @@ function Header({ title }) {
             />
           </div>
           { show && (
-            <label htmlFor="search">
-              Pesquisar:
-              <input data-testid="search-input" type="text" name="search" id="search" />
-            </label>
+            <SearchBar
+              handleRadio={ handleRadio }
+              handleSearch={ handleSearch }
+              search={ search }
+              clickSearch={ clickSearch }
+            />
           )}
         </>
       )}

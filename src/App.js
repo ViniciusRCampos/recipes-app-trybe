@@ -14,16 +14,16 @@ function App() {
     <BrowserRouter>
       <MyProvider>
         <Switch>
-          <Route exact path="/" component={ Login } />
-          <Route path="/meals" component={ Meals } />
-          {/* <Route exact path="/meals/:id" component={ Home } /> */}
-          {/* <Route exact path="/meals/:id/in-progress" component={ Home } /> */}
-          <Route exact path="/drinks" component={ Drinks } />
-          <Route exact path="/drinks/:id" component={ Drinks } />
-          {/* <Route exact path="/drinks/:id/in-progress" component={ Home } /> */}
-          <Route exact path="/profile" component={ Profile } />
-          <Route exact path="/done-recipes" component={ DoneRecipes } />
-          <Route exact path="/favorite-recipes" component={ Favorites } />
+          <Route exact path="/" render={ () => <Login /> } />
+          <Route exact path="/meals" render={ () => <Meals /> } />
+          <Route exact path="/meals/:id" render={ () => <DoneRecipes /> } />
+          {/* <Route exact path="/meals/:id/in-progress" render={ Home } /> */}
+          <Route exact path="/drinks" render={ () => <Drinks /> } />
+          <Route exact path="/drinks/:id" render={ () => <Favorites /> } />
+          {/* <Route exact path="/drinks/:id/in-progress" render={ Home } /> */}
+          <Route exact path="/profile" render={ () => <Profile /> } />
+          <Route exact path="/done-recipes" render={ () => <DoneRecipes /> } />
+          <Route exact path="/favorite-recipes" render={ () => <Favorites /> } />
         </Switch>
       </MyProvider>
     </BrowserRouter>
