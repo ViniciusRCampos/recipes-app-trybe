@@ -13,6 +13,22 @@ function Meals() {
       <Header
         title="Meals"
       />
+      {/* {
+        // recipes.length === 1 ? route.push(`/meals/${recipes[0].idMeal}`)
+        //   :
+        recipes.map((recipe, id) => (
+          <RecipeCards
+            onClick={ () => route.push(`/meals/${recipe.idMeal}`) }
+            str={ recipe.strMeal }
+            strThumb={ recipe.strMealThumb }
+            key={ recipe.idMeal }
+            onKeyDown={ () => route.push(`/meals/${recipe.idMeal}`) }
+            testId={ `${id}-recipe-card` }
+            testImg={ `${id}-card-img` }
+            testName={ `${id}-card-name` }
+          />
+        ))
+      } */}
       {
         recipes.length === 1 ? route.push(`/meals/${recipes[0].idMeal}`)
           : recipes.map((recipe, id) => (

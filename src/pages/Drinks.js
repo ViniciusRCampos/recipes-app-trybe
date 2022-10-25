@@ -13,19 +13,21 @@ function Drinks() {
       <Header
         title="Drinks"
       />
-      {recipes.length === 1 ? route.push(`/drinks/${recipes[0].idDrink}`)
-        : recipes.map((recipe, id) => (
-          <RecipeCards
-            onClick={ () => route.push(`/drinks/${recipe.idDrink}`) }
-            str={ recipe.strDrink }
-            strThumb={ recipe.strDrinkThumb }
-            key={ recipe.idDrink }
-            onKeyDown={ () => route.push(`/drinks/${recipe.idDrink}`) }
-            testId={ `${id}-recipe-card` }
-            testImg={ `${id}-card-img` }
-            testName={ `${id}-card-name` }
-          />
-        ))}
+      {
+        recipes.length === 1 ? route.push(`/drinks/${recipes[0].idDrink}`)
+          : recipes.map((recipe, id) => (
+            <RecipeCards
+              onClick={ () => route.push(`/drinks/${recipe.idDrink}`) }
+              str={ recipe.strDrink }
+              strThumb={ recipe.strDrinkThumb }
+              key={ recipe.idDrink }
+              onKeyDown={ () => route.push(`/drinks/${recipe.idDrink}`) }
+              testId={ `${id}-recipe-card` }
+              testImg={ `${id}-card-img` }
+              testName={ `${id}-card-name` }
+            />
+          ))
+      }
     </div>
   );
 }

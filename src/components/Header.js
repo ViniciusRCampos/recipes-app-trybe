@@ -1,6 +1,6 @@
-import React, { useContext } from 'react';
-import MyContext from '../context/myContext';
+import React, { useContext, useState } from 'react';
 import PropTypes from 'prop-types';
+import MyContext from '../context/myContext';
 import profileIcon from '../images/profileIcon.svg';
 import searchIcon from '../images/searchIcon.svg';
 import SearchBar from './SearchBar';

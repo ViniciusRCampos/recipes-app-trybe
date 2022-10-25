@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 
 function RecipeCards(props) {
   const { onClick, onKeyDown, str, strThumb, testId, testImg, testName } = props;
+  console.log(onClick);
   return (
     <div
       onClick={ onClick }

@@ -1,8 +1,8 @@
 import React, { useContext } from 'react';
 import MyContext from '../context/myContext';
 
-export default function SearchBar(props) {
-  const { handleRadio, handleSearch, search, clickSearch } = props;
+export default function SearchBar() {
+  const { handleRadio, handleSearch, search, clickSearch } = useContext(MyContext);
 
   return (
     <section>

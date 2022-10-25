@@ -13,12 +13,11 @@ function MyProvider({ children }) {
   });
 
   const [search, setSearch] = useState('');
-  const [radio, setRadio] = useState('ingredient');
+  const [radio, setRadio] = useState('');
   const [recipes, setRecipes] = useState([]);
 
   const selectEndPoint = useCallback(() => {
     if (window.location.pathname.includes('meals')) {
-      console.log(radio, 'if');
       switch (radio) {
       case 'ingredient':
       { return `https://www.themealdb.com/api/json/v1/1/filter.php?i=${search}`;
@@ -61,23 +60,65 @@ function MyProvider({ children }) {
     }
   }, [radio, search]);
 
+  // const API = useCallback(
+  //   async () => {
+  //     try {
+  //       const response = await fetch(selectEndPoint());
+  //       const data = await response.json();
+  //       console.log(typeof data.drinks, data.drinks.len);
+  //       if (data.drinks) {
+  //         console.log(data.length, 'entrei');
+  //         if (!data.length) {
+  //           console.log('Deu bom!');
+  //           // global.alert('Sorry, we haven\'t found any recipes for these filters.');
+  //         } else if (data.drinks.length > Number('12')) {
+  //           setRecipes(data.drinks.slice(0, +'12'));
+  //         } else {
+  //           setRecipes(data.drinks);
+  //         }
+  //       }
+  //       if (data.meals) {
+  //         if (data.meals.length > Number('12')) {
+  //           setRecipes(data.meals.slice(0, +'12'));
+  //         } else {
+  //           setRecipes(data.meals);
+  //         }
+  //       }
+  //     } catch (error) {
+  //       console.log(error);
+  //       global.alert('Sorry, we haven\'t found any recipes for these filters.');
+  //     }
+  //   },
+  //   [selectEndPoint],
+  // );
+
   const API = useCallback(
     async () => {
-      const response = await fetch(selectEndPoint());
-      const data = await response.json();
-      if (data.drinks) {
-        if (data.drinks.length > Number('12')) {
-          setRecipes(data.drinks.slice(0, +'12'));
+      try {
+        const response = await fetch(selectEndPoint());
+        const data = await response.json();
+        console.log(data);
+        if (Object.values(data)[0] !== null) {
+          if (data.drinks) {
+            if (data.drinks.length > Number('12')) {
+              setRecipes(data.drinks.slice(0, +'12'));
+            } else {
+              setRecipes(data.drinks);
+            }
+          }
+          if (data.meals) {
+            if (data.meals.length > Number('12')) {
+              setRecipes(data.meals.slice(0, +'12'));
+            } else {
+              setRecipes(data.meals);
+            }
+          }
         } else {
-          setRecipes(data.drinks);
+          global.alert('Sorry, we haven\'t found any recipes for these filters.');
         }
-      }
-      if (data.meals) {
-        if (data.meals.length > Number('12')) {
-          setRecipes(data.meals.slice(0, +'12'));
-        } else {
-          setRecipes(data.meals);
-        }
+      } catch (error) {
+        console.log(error);
+        global.alert('Sorry, we haven\'t found any recipes for these filters.');
       }
     },
     [selectEndPoint],
@@ -91,8 +132,8 @@ function MyProvider({ children }) {
     setSearch(value);
   };
 
-  const handleRadio = (event) => {
-    setRadio((oldState) => ({ ...oldState, [event.target.name]: event.target.value }));
+  const handleRadio = ({ target: { value } }) => {
+    setRadio(value);
   };
 
   const handleLogin = (event) => {
@@ -122,7 +163,7 @@ function MyProvider({ children }) {
       handleSearch,
       clickSearch,
     }),
-    [login, route, search, radio, recipes, handleLoginButton, handleRadio, clickSearch],
+    [login, route, search, radio, recipes, handleLoginButton, clickSearch],
   );
 
   return (
