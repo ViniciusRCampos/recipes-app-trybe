@@ -19,13 +19,12 @@ function Header({ title }) {
       </a>
       {path === '/profile'
       || path === '/done-recipes'
-      || path === '/favorite-recipes' ? null
+      || path === '/favorite-recipes' ? <p>:b</p>
         : (
           <>
             <div
               role="button"
               onKeyDown={ () => setShow(!show) }
-              type="button"
               onClick={ () => setShow(!show) }
               tabIndex={ 0 }
             >
@@ -50,7 +49,7 @@ function Header({ title }) {
 }
 
 Header.propTypes = {
-  title: PropTypes.string.isRequired,
-};
+  title: PropTypes.string,
+}.isRequired;
 
 export default Header;
