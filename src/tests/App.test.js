@@ -34,7 +34,3 @@ describe('If component Header works properly', () => {
     expect(input).not.toContain();
   });
 });
-
-describe('check footer', () => {
-
-});
