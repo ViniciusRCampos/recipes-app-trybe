@@ -17,32 +17,30 @@ function Header({ title }) {
           alt={ `imagem de ${profileIcon}` }
         />
       </a>
-      {path === '/profile'
+      {!(path === '/profile'
       || path === '/done-recipes'
-      || path === '/favorite-recipes' ? null
-        : (
-          <>
-            <div
-              role="button"
-              onKeyDown={ () => setShow(!show) }
-              type="button"
-              onClick={ () => setShow(!show) }
-              tabIndex={ 0 }
-            >
-              <img
-                data-testid="search-top-btn"
-                src={ searchIcon }
-                alt="search icon"
-              />
-            </div>
-            { show && (
-              <label htmlFor="search">
-                Pesquisar:
-                <input data-testid="search-input" type="text" name="search" id="search" />
-              </label>
-            )}
-          </>
-        )}
+      || path === '/favorite-recipes') && (
+        <>
+          <div
+            role="button"
+            onKeyDown={ () => setShow(!show) }
+            onClick={ () => setShow(!show) }
+            tabIndex={ 0 }
+          >
+            <img
+              data-testid="search-top-btn"
+              src={ searchIcon }
+              alt="search icon"
+            />
+          </div>
+          { show && (
+            <label htmlFor="search">
+              Pesquisar:
+              <input data-testid="search-input" type="text" name="search" id="search" />
+            </label>
+          )}
+        </>
+      )}
       <h1 data-testid="page-title">{title}</h1>
 
     </header>
@@ -50,7 +48,7 @@ function Header({ title }) {
 }
 
 Header.propTypes = {
-  title: PropTypes.string.isRequired,
-};
+  title: PropTypes.string,
+}.isRequired;
 
 export default Header;

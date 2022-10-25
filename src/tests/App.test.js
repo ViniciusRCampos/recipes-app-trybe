@@ -1,8 +1,9 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import App from '../App';
 import Header from '../components/Header';
+import renderWithRouter from '../helpers/renderWithRouter';
 
 describe('If component Login works properly', () => {
   it('Check login functions', async () => {
@@ -19,19 +20,17 @@ describe('If component Login works properly', () => {
     expect(await password.value).toHaveLength(6);
   });
 });
+
 describe('If component Header works properly', () => {
-  it('check functionalities from header', () => {
-    render(<Header />);
+  it('check functionalities from header', async () => {
+    renderWithRouter(<Header />);
     const btn = screen.getByRole('img', {
       name: /search icon/i,
     });
     const input = screen.getByTestId('search-top-btn');
-    console.log(btn);
+    userEvent.click(btn);
     expect(input).toBeVisible();
-    // expect(input).not.toBeVisible();
-    // userEvent.clear(btn);
-    // expect(input).toBeVisible();
-    // userEvent.clear(btn);
-    // expect(input).not.toBeVisible();
+    fireEvent.keyDown(input, { keyCode: 13 });
+    expect(input).not.toContain();
   });
 });
