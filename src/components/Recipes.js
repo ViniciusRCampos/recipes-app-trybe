@@ -19,7 +19,7 @@ function Recipes() {
   return (
     <>
 
-      { (window.location.pathname.includes('drinks') && getCategory.length === true)
+      {/* { (window.location.pathname.includes('drinks') && getCategory.length === true)
         && getDrinkCat.map((e, index) => (
           <button
             data-testid={ `${e.strCategory}-category-filter` }
@@ -30,7 +30,7 @@ function Recipes() {
           >
             { e.strCategory }
           </button>
-        ))}
+        ))} */}
 
       {window.location.pathname.includes('meals')
         && getCategory.map((e, index) => (
@@ -57,7 +57,10 @@ function Recipes() {
             key={ index }
             data-testid={ `${e.strCategory}-category-filter` }
             type="button"
-            onClick={ (event) => handleClickCat(event.target.value) }
+            value={ e.strCategory }
+            onClick={ (event) => {
+              handleClickCat(event.target.value);
+            } }
           >
             {e.strCategory}
           </button>
@@ -77,7 +80,7 @@ function Recipes() {
           testName={ `${id}-card-name` }
         />
       ))}
-      {
+      { // meals iniciais
         recipes.length < 1
           && (initialMeal.map((recipe, id) => (
             <RecipeCards
@@ -92,7 +95,7 @@ function Recipes() {
             />)))
       }
 
-      {
+      { // drinks iniciais
         recipes.length < 1
         && (initialDrink.map((recipe, id) => (
           <RecipeCards

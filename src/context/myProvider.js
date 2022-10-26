@@ -18,6 +18,7 @@ function MyProvider({ children }) {
   const [getCategory, setGetCategory] = useState([]);
   const [getDrinkCat, setGetDrinkCat] = useState([]);
   const [buttonFilter, setButtonFilter] = useState([]);
+  const [clickedFilter, setClickedFilter] = useState('');
 
   const selectEndPoint = useCallback(() => {
     if (window.location.pathname.includes('meals')) {
@@ -70,17 +71,22 @@ function MyProvider({ children }) {
     setButtonFilter(response.meals.splice(0, +'12'));
   };
 
-  const drinkFilters = async (param) => { // aqui, verificar a API
-    const initial2 = await fetch(`https://www.thecocktaildb.com/api/json/v1/1/filter.php?c=${param}`);
-    // const initial2 = await fetch('https://www.thecocktaildb.com/api/json/v1/1/filter.php?c=Cocktail');
-    const response = await initial2.json();
-    setButtonFilter(response.drinks.splice(0, +'12'));
-  };
-  console.log('aqui', buttonFilter);
-
   const handleClickCat = useMemo(() => (event) => {
-    drinkFilters(event);
-  }, []);
+    console.log('>>>>>', clickedFilter, 'oi');
+    if (clickedFilter === event) {
+      console.log('entrei no clicked');
+      setClickedFilter('');
+      setButtonFilter(initialDrink);
+    } else {
+      setClickedFilter(event);
+      const drinkFilters = async () => { // aqui, verificar a API
+        const initial2 = await fetch(`https://www.thecocktaildb.com/api/json/v1/1/filter.php?c=${event}`);
+        const response = await initial2.json();
+        setButtonFilter(response.drinks.splice(0, +'12'));
+      };
+      drinkFilters();
+    }
+  }, [clickedFilter, initialDrink]);
 
   const handleClickCategory = useMemo(() => (event) => {
     mealFilters(event);
@@ -193,6 +199,7 @@ function MyProvider({ children }) {
       getDrinkCat,
       getCategory,
       buttonFilter,
+      clickedFilter,
       setButtonFilter,
       handleLogin,
       handleLoginButton,
@@ -213,6 +220,7 @@ function MyProvider({ children }) {
       initialMeal,
       initialDrink,
       buttonFilter,
+      clickedFilter,
       handleClickCategory,
       handleClickCat,
       handleLoginButton,
