@@ -6,15 +6,18 @@ import { setLocalStorage } from '../helpers/localStorage';
 
 function MyProvider({ children }) {
   const route = useHistory();
-
   const [login, setLogin] = useState({
     email: '',
     password: '',
   });
-
   const [search, setSearch] = useState('');
   const [radio, setRadio] = useState('');
   const [recipes, setRecipes] = useState([]);
+  const [initialMeal, setInitialMeal] = useState([]);
+  const [initialDrink, setInitialDrink] = useState([]);
+  const [getCategory, setGetCategory] = useState([]);
+  const [getDrinkCat, setGetDrinkCat] = useState([]);
+  const [buttonFilter, setButtonFilter] = useState([]);
 
   const selectEndPoint = useCallback(() => {
     if (window.location.pathname.includes('meals')) {
@@ -60,37 +63,65 @@ function MyProvider({ children }) {
     }
   }, [radio, search]);
 
-  // const API = useCallback(
-  //   async () => {
-  //     try {
-  //       const response = await fetch(selectEndPoint());
-  //       const data = await response.json();
-  //       console.log(typeof data.drinks, data.drinks.len);
-  //       if (data.drinks) {
-  //         console.log(data.length, 'entrei');
-  //         if (!data.length) {
-  //           console.log('Deu bom!');
-  //           // global.alert('Sorry, we haven\'t found any recipes for these filters.');
-  //         } else if (data.drinks.length > Number('12')) {
-  //           setRecipes(data.drinks.slice(0, +'12'));
-  //         } else {
-  //           setRecipes(data.drinks);
-  //         }
-  //       }
-  //       if (data.meals) {
-  //         if (data.meals.length > Number('12')) {
-  //           setRecipes(data.meals.slice(0, +'12'));
-  //         } else {
-  //           setRecipes(data.meals);
-  //         }
-  //       }
-  //     } catch (error) {
-  //       console.log(error);
-  //       global.alert('Sorry, we haven\'t found any recipes for these filters.');
-  //     }
-  //   },
-  //   [selectEndPoint],
-  // );
+  const mealFilters = async (param) => {
+    const initial = await fetch(`https://www.themealdb.com/api/json/v1/1/filter.php?c=${param}`);
+    const response = await initial.json();
+    console.log('meals', response);
+    setButtonFilter(response.meals.splice(0, +'12'));
+  };
+
+  const drinkFilters = async (param) => { // aqui, verificar a API
+    const initial2 = await fetch(`https://www.thecocktaildb.com/api/json/v1/1/filter.php?c=${param}`);
+    // const initial2 = await fetch('https://www.thecocktaildb.com/api/json/v1/1/filter.php?c=Cocktail');
+    const response = await initial2.json();
+    setButtonFilter(response.drinks.splice(0, +'12'));
+  };
+  console.log('aqui', buttonFilter);
+
+  const handleClickCat = useMemo(() => (event) => {
+    drinkFilters(event);
+  }, []);
+
+  const handleClickCategory = useMemo(() => (event) => {
+    mealFilters(event);
+  }, []);
+
+  useEffect(() => {
+    if (window.location.pathname.includes('/meals')) {
+      const getCategories = async () => {
+        const initial = await fetch('https://www.themealdb.com/api/json/v1/1/list.php?c=list');
+        const response = await initial.json();
+        setGetCategory(response.meals.slice(0, +'5'));
+      };
+      getCategories();
+    } else if (window.location.pathname.includes('/drinks')) {
+      const getCat = async () => {
+        const initial = await fetch('https://www.thecocktaildb.com/api/json/v1/1/list.php?c=list');
+        const response = await initial.json();
+        setGetDrinkCat(response.drinks.slice(0, +'5'));
+      };
+      getCat();
+    }
+  }, []);
+
+  useEffect(() => {
+    if (window.location.pathname.includes('/meals')) {
+      const getMealsFirst = async () => {
+        const initial = await fetch('https://www.themealdb.com/api/json/v1/1/search.php?s=');
+        const response = await initial.json();
+        setInitialMeal(response.meals.slice(0, +'12'));
+      };
+      getMealsFirst();
+    } else if (window.location.pathname.includes('/drinks')) {
+      const getFirstTwo = async () => {
+        const initial = await fetch('https://www.thecocktaildb.com/api/json/v1/1/search.php?s=');
+        const response = await initial.json();
+        console.log('drinks', response);
+        setInitialDrink(response.drinks.slice(0, +'12'));
+      };
+      getFirstTwo();
+    }
+  }, []);
 
   const API = useCallback(
     async () => {
@@ -157,13 +188,36 @@ function MyProvider({ children }) {
       search,
       radio,
       recipes,
+      initialMeal,
+      initialDrink,
+      getDrinkCat,
+      getCategory,
+      buttonFilter,
+      setButtonFilter,
       handleLogin,
       handleLoginButton,
       handleRadio,
       handleSearch,
       clickSearch,
+      handleClickCategory,
+      handleClickCat,
     }),
-    [login, route, search, radio, recipes, handleLoginButton, clickSearch],
+    [
+      login,
+      route,
+      getCategory,
+      getDrinkCat,
+      search,
+      radio,
+      recipes,
+      initialMeal,
+      initialDrink,
+      buttonFilter,
+      handleClickCategory,
+      handleClickCat,
+      handleLoginButton,
+      clickSearch,
+    ],
   );
 
   return (

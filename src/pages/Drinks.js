@@ -4,16 +4,19 @@ import MyContext from '../context/myContext';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import RecipeCards from '../components/RecipeCards';
+import Recipes from '../components/Recipes';
 
 function Drinks() {
   const route = useHistory();
-  const { recipes } = useContext(MyContext);
-  console.log(recipes, 'Drinks', recipes.length);
+  const { recipes, getDrinkCat } = useContext(MyContext);
+  console.log(getDrinkCat);
   return (
     <div>
       <Header
         title="Drinks"
       />
+      <Recipes />
+
       {
         recipes.length === 1 ? route.push(`/drinks/${recipes[0].idDrink}`)
           : recipes.map((recipe, id) => (
