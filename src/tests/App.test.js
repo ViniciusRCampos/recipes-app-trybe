@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { screen, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import Header from '../components/Header';
 import renderWithRouter from '../helpers/renderWithRouter';
@@ -8,7 +8,7 @@ import SearchBar from '../components/SearchBar';
 
 describe('If component Login works properly', () => {
   it('Check login functions', async () => {
-    render(<App />);
+    renderWithRouter(<App />);
     const login = screen.getByRole('textbox', {
       name: /email:/i,
     });
