@@ -64,13 +64,6 @@ function MyProvider({ children }) {
     }
   }, [radio, search]);
 
-  const mealFilters = async (param) => {
-    const initial = await fetch(`https://www.themealdb.com/api/json/v1/1/filter.php?c=${param}`);
-    const response = await initial.json();
-    console.log('meals', response);
-    setButtonFilter(response.meals.splice(0, +'12'));
-  };
-
   const handleClickCat = useMemo(() => (event) => {
     console.log('>>>>>', clickedFilter, 'oi');
     if (clickedFilter === event) {
@@ -89,8 +82,21 @@ function MyProvider({ children }) {
   }, [clickedFilter, initialDrink]);
 
   const handleClickCategory = useMemo(() => (event) => {
-    mealFilters(event);
-  }, []);
+    console.log('>>>>>', clickedFilter, 'oi');
+    if (clickedFilter === event) {
+      console.log('entrei no clicked');
+      setClickedFilter('');
+      setButtonFilter(initialMeal);
+    } else {
+      setClickedFilter(event);
+      const mealFilters = async () => { // aqui, verificar a API
+        const initial2 = await fetch(`https://www.themealdb.com/api/json/v1/1/filter.php?c=${event}`);
+        const response = await initial2.json();
+        setButtonFilter(response.meals.splice(0, +'12'));
+      };
+      mealFilters();
+    }
+  }, [clickedFilter, initialMeal]);
 
   useEffect(() => {
     if (window.location.pathname.includes('/meals')) {
