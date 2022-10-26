@@ -4,7 +4,7 @@ import { useHistory } from 'react-router';
 import myContext from './myContext';
 import { setLocalStorage } from '../helpers/localStorage';
 import { getCat, getCategories, getMealsFirst, getFirstTwo,
-  drinkFilters, mealFilters, handleLogin } from '../helpers/Api';
+  drinkFilters, mealFilters } from '../helpers/Api';
 
 function MyProvider({ children }) {
   const route = useHistory();
@@ -21,33 +21,6 @@ function MyProvider({ children }) {
   const [getDrinkCat, setGetDrinkCat] = useState([]);
   const [buttonFilter, setButtonFilter] = useState([]);
   const [clickedFilter, setClickedFilter] = useState('');
-
-  const selectEndPoint = useCallback(() => {
-    if (window.location.pathname.includes('meals')) {
-      switch (radio) {
-      case 'ingredient':
-        return `https://www.themealdb.com/api/json/v1/1/filter.php?i=${search}`;
-      case 'name':
-        return `https://www.themealdb.com/api/json/v1/1/search.php?s=${search}`;
-      case 'letter':
-        return `https://www.themealdb.com/api/json/v1/1/search.php?f=${search}`;
-      default:
-        break;
-      }
-    }
-    if (window.location.pathname.includes('drinks')) {
-      switch (radio) {
-      case 'ingredient':
-        return `https://www.thecocktaildb.com/api/json/v1/1/filter.php?i=${search}`;
-      case 'name':
-        return `https://www.thecocktaildb.com/api/json/v1/1/search.php?s=${search}`;
-      case 'letter':
-        return `https://www.thecocktaildb.com/api/json/v1/1/search.php?f=${search}`;
-      default:
-        break;
-      }
-    }
-  }, [radio, search]);
 
   const handleClickCat = useMemo(() => async (event) => {
     if (clickedFilter === event) {
@@ -86,44 +59,9 @@ function MyProvider({ children }) {
     if (radio === 'letter' && search.length > 1) {
       global.alert('Your search must have only 1 (one) character');
     }
-    selectEndPoint(); // remover radio e search
+    // selectEndPoint(); // remover radio e search
     request();
-  }, [radio, search.length, selectEndPoint]);
-
-  const API = useCallback(
-    async () => {
-      try {
-        const response = await fetch(selectEndPoint());
-        const data = await response.json();
-        if (Object.values(data)[0] !== null) {
-          if (data.drinks) {
-            if (data.drinks.length > Number('12')) {
-              setRecipes(data.drinks.slice(0, +'12'));
-            } else {
-              setRecipes(data.drinks);
-            }
-          }
-          if (data.meals) {
-            if (data.meals.length > Number('12')) {
-              setRecipes(data.meals.slice(0, +'12'));
-            } else {
-              setRecipes(data.meals);
-            }
-          }
-        } else {
-          global.alert('Sorry, we haven\'t found any recipes for these filters.');
-        }
-      } catch (error) {
-        console.log(error);
-        global.alert('Sorry, we haven\'t found any recipes for these filters.');
-      }
-    },
-    [selectEndPoint],
-  );
-
-  const clickSearch = useCallback(() => {
-    API();
-  }, [API]);
+  }, [radio, search.length]);
 
   const handleSearch = ({ target: { value } }) => {
     setSearch(value);
@@ -165,9 +103,10 @@ function MyProvider({ children }) {
       handleLoginButton,
       handleRadio,
       handleSearch,
-      clickSearch,
+      // clickSearch,
       handleClickCategory,
       handleClickCat,
+      setRecipes,
     }),
     [
       login,
@@ -184,7 +123,7 @@ function MyProvider({ children }) {
       handleClickCategory,
       handleClickCat,
       handleLoginButton,
-      clickSearch,
+      // clickSearch,
     ],
   );
 

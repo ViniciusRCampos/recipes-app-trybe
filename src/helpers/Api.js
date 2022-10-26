@@ -1,10 +1,3 @@
-export const handleLogin = (event, setLogin) => {
-  setLogin((prev) => ({
-    ...prev,
-    [event.target.name]: event.target.value,
-  }));
-};
-
 export const drinkFilters = async (event) => { // aqui, verificar a API
   const initial2 = await fetch(`https://www.thecocktaildb.com/api/json/v1/1/filter.php?c=${event}`);
   const response = await initial2.json();

@@ -4,6 +4,7 @@ import MyContext from '../context/myContext';
 import RecipeCards from './RecipeCards';
 
 function Recipes() {
+  const pathName = window.location.pathname;
   const route = useHistory();
   const {
     recipes,
@@ -16,6 +17,7 @@ function Recipes() {
     setButtonFilter,
     handleClickCat,
   } = useContext(MyContext);
+  console.log(pathName, 'pathname');
   return (
     <>
 
@@ -55,13 +57,15 @@ function Recipes() {
       }
       { buttonFilter.map((recipe, id) => (
         <RecipeCards // mapeamento dos filtros
-          onClick={ () => route.push(`/drinks/${recipe.idDrink}`) // ver onClick
-          || route.push(`/meals/${recipe.idMeal}`) }
+          onClick={ pathName === '/meals'
+            ? () => route.push(`/meals/${recipe.idMeal}`)
+            : () => route.push(`/drinks/${recipe.idDrink}`) }
           str={ recipe.strDrink || recipe.strMeal }
           strThumb={ recipe.strDrinkThumb || recipe.strMealThumb }
-          key={ recipe.idDrink || recipe.idMeal }
-          onKeyDown={ () => route.push(`/drinks/${recipe.idDrink}`)
-          || route.push(`/meals/${recipe.idMeal}`) }
+          key={ recipe.idMeal || recipe.idDrink }
+          onKeyDown={ pathName === '/meals'
+            ? () => route.push(`/meals/${recipe.idMeal}`)
+            : () => route.push(`/drinks/${recipe.idDrink}`) }
           testId={ `${id}-recipe-card` }
           testImg={ `${id}-card-img` }
           testName={ `${id}-card-name` }
