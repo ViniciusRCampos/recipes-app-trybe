@@ -3,29 +3,21 @@ import { screen } from '@testing-library/react';
 import renderWithRouter from '../helpers/renderWithRouter';
 import SearchBar from '../components/SearchBar';
 
-// const arr = ['All', 'Ordinary Drink', 'Cocktail', 'Shake', 'Other/Unknown', 'Cocoa'];
+const arr = ['All', 'Ordinary Drink', 'Cocktail', 'Shake', 'Other/Unknown', 'Cocoa'];
 describe('Check if Recipes is working properly', () => {
-  // it('a', async () => {
-  //   renderWithRouter(<Route exact path="/drinks" render={ () => <Drinks /> } />);
-  //   setTimeout(() => {
-  //     const test = screen.getByRole('button', {
-  //       name: /ordinary drink/i,
-  //     });
-  //     expect(test).toBeInTheDocument();
-  //     arr.forEach((e) => {
-  //       const btns = screen.getByRole('button', {
-  //         name: e,
-  //       });
-  //       expect(btns).toBeInTheDocument();
-  //     });
-  //   });
-  // }, 2000);
-
-  it('', async () => {
+  it('a', async () => {
     renderWithRouter(<SearchBar />);
-    const teste = screen.findByRole('textbox', {
-      name: /pesquisar:/i,
+    setTimeout(() => {
+      const test = screen.getByRole('button', {
+        name: /ordinary drink/i,
+      });
+      expect(test).toBeInTheDocument();
+      arr.forEach((e) => {
+        const btns = screen.getByRole('button', {
+          name: e,
+        });
+        expect(btns).toBeInTheDocument();
+      });
     });
-    expect(teste).toBeInTheDocument();
-  });
+  }, 2000);
 });
