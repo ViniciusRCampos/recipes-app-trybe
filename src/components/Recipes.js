@@ -19,19 +19,6 @@ function Recipes() {
   return (
     <>
 
-      {/* { (window.location.pathname.includes('drinks') && getCategory.length === true)
-        && getDrinkCat.map((e, index) => (
-          <button
-            data-testid={ `${e.strCategory}-category-filter` }
-            key={ index }
-            value={ e.strCategory }
-            type="button"
-            onClick={ (event) => handleClickCat(event.target.value) }
-          >
-            { e.strCategory }
-          </button>
-        ))} */}
-
       {window.location.pathname.includes('meals')
         && getCategory.map((e, index) => (
           <button

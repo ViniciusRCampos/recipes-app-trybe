@@ -3,6 +3,8 @@ import PropTypes from 'prop-types';
 import { useHistory } from 'react-router';
 import myContext from './myContext';
 import { setLocalStorage } from '../helpers/localStorage';
+import { getCat, getCategories, getMealsFirst, getFirstTwo,
+  drinkFilters, mealFilters, handleLogin } from '../helpers/Api';
 
 function MyProvider({ children }) {
   const route = useHistory();
@@ -24,16 +26,11 @@ function MyProvider({ children }) {
     if (window.location.pathname.includes('meals')) {
       switch (radio) {
       case 'ingredient':
-      { return `https://www.themealdb.com/api/json/v1/1/filter.php?i=${search}`;
-      }
+        return `https://www.themealdb.com/api/json/v1/1/filter.php?i=${search}`;
       case 'name':
-      {
         return `https://www.themealdb.com/api/json/v1/1/search.php?s=${search}`;
-      }
       case 'letter':
-      {
         return `https://www.themealdb.com/api/json/v1/1/search.php?f=${search}`;
-      }
       default:
         break;
       }
@@ -41,106 +38,63 @@ function MyProvider({ children }) {
     if (window.location.pathname.includes('drinks')) {
       switch (radio) {
       case 'ingredient':
-      {
         return `https://www.thecocktaildb.com/api/json/v1/1/filter.php?i=${search}`;
-      }
       case 'name':
-      {
         return `https://www.thecocktaildb.com/api/json/v1/1/search.php?s=${search}`;
-      }
       case 'letter':
-      {
         return `https://www.thecocktaildb.com/api/json/v1/1/search.php?f=${search}`;
-      }
       default:
         break;
       }
     }
   }, [radio, search]);
 
-  useEffect(() => {
-    if (radio === 'letter' && search.length > 1) {
-      global.alert('Your search must have only 1 (one) character');
-    }
-  }, [radio, search]);
-
-  const handleClickCat = useMemo(() => (event) => {
-    console.log('>>>>>', clickedFilter, 'oi');
+  const handleClickCat = useMemo(() => async (event) => {
     if (clickedFilter === event) {
-      console.log('entrei no clicked');
-      setClickedFilter('');
       setButtonFilter(initialDrink);
     } else {
       setClickedFilter(event);
-      const drinkFilters = async () => { // aqui, verificar a API
-        const initial2 = await fetch(`https://www.thecocktaildb.com/api/json/v1/1/filter.php?c=${event}`);
-        const response = await initial2.json();
-        setButtonFilter(response.drinks.splice(0, +'12'));
-      };
-      drinkFilters();
+      const drinkFilter = await drinkFilters(event);
+      setButtonFilter(drinkFilter.drinks.splice(0, +'12'));
     }
   }, [clickedFilter, initialDrink]);
 
-  const handleClickCategory = useMemo(() => (event) => {
-    console.log('>>>>>', clickedFilter, 'oi');
+  const handleClickCategory = useMemo(() => async (event) => {
     if (clickedFilter === event) {
-      console.log('entrei no clicked');
-      setClickedFilter('');
       setButtonFilter(initialMeal);
     } else {
       setClickedFilter(event);
-      const mealFilters = async () => { // aqui, verificar a API
-        const initial2 = await fetch(`https://www.themealdb.com/api/json/v1/1/filter.php?c=${event}`);
-        const response = await initial2.json();
-        setButtonFilter(response.meals.splice(0, +'12'));
-      };
-      mealFilters();
+      const get = await mealFilters(event);
+      setButtonFilter(get.meals.splice(0, +'12'));
     }
   }, [clickedFilter, initialMeal]);
 
   useEffect(() => {
-    if (window.location.pathname.includes('/meals')) {
-      const getCategories = async () => {
-        const initial = await fetch('https://www.themealdb.com/api/json/v1/1/list.php?c=list');
-        const response = await initial.json();
-        setGetCategory(response.meals.slice(0, +'5'));
-      };
-      getCategories();
-    } else if (window.location.pathname.includes('/drinks')) {
-      const getCat = async () => {
-        const initial = await fetch('https://www.thecocktaildb.com/api/json/v1/1/list.php?c=list');
-        const response = await initial.json();
-        setGetDrinkCat(response.drinks.slice(0, +'5'));
-      };
-      getCat();
+    const request = async () => {
+      if (window.location.pathname.includes('/meals')) {
+        const get = await getMealsFirst();
+        const getCatego = await getCategories();
+        setInitialMeal(get.meals.slice(0, +'12'));
+        setGetCategory(getCatego.meals.slice(0, +'5'));
+      } else if (window.location.pathname.includes('/drinks')) {
+        const get = await getFirstTwo();
+        const getC = await getCat();
+        setInitialDrink(get.drinks.slice(0, +'12'));
+        setGetDrinkCat(getC.drinks.slice(0, +'5'));
+      }
+    };
+    if (radio === 'letter' && search.length > 1) {
+      global.alert('Your search must have only 1 (one) character');
     }
-  }, []);
-
-  useEffect(() => {
-    if (window.location.pathname.includes('/meals')) {
-      const getMealsFirst = async () => {
-        const initial = await fetch('https://www.themealdb.com/api/json/v1/1/search.php?s=');
-        const response = await initial.json();
-        setInitialMeal(response.meals.slice(0, +'12'));
-      };
-      getMealsFirst();
-    } else if (window.location.pathname.includes('/drinks')) {
-      const getFirstTwo = async () => {
-        const initial = await fetch('https://www.thecocktaildb.com/api/json/v1/1/search.php?s=');
-        const response = await initial.json();
-        console.log('drinks', response);
-        setInitialDrink(response.drinks.slice(0, +'12'));
-      };
-      getFirstTwo();
-    }
-  }, []);
+    selectEndPoint(); // remover radio e search
+    request();
+  }, [radio, search.length, selectEndPoint]);
 
   const API = useCallback(
     async () => {
       try {
         const response = await fetch(selectEndPoint());
         const data = await response.json();
-        console.log(data);
         if (Object.values(data)[0] !== null) {
           if (data.drinks) {
             if (data.drinks.length > Number('12')) {
