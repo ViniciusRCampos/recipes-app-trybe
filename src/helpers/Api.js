@@ -19,6 +19,7 @@ export const getCat = async () => {
 export const getMealsFirst = async () => {
   const initial = await fetch('https://www.themealdb.com/api/json/v1/1/search.php?s=');
   const response = await initial.json();
+  console.log(response, 'meals');
   return response;
 };
 
