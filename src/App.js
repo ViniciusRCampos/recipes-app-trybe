@@ -9,6 +9,7 @@ import Favorites from './pages/Favorites';
 import Meals from './pages/Meals';
 import Profile from './pages/Profile';
 import RecipeDetails from './pages/RecipeDetails';
+import './App.css';
 
 function App() {
   return (
@@ -18,10 +19,8 @@ function App() {
           <Route exact path="/" render={ () => <Login /> } />
           <Route exact path="/meals" render={ () => <Meals /> } />
           <Route exact path="/meals/:id" render={ () => <RecipeDetails /> } />
-          {/* <Route exact path="/meals/:id/in-progress" render={ Home } /> */}
           <Route exact path="/drinks" render={ () => <Drinks /> } />
           <Route exact path="/drinks/:id" render={ () => <RecipeDetails /> } />
-          {/* <Route exact path="/drinks/:id/in-progress" render={ Home } /> */}
           <Route exact path="/profile" render={ () => <Profile /> } />
           <Route exact path="/done-recipes" render={ () => <DoneRecipes /> } />
           <Route exact path="/favorite-recipes" render={ () => <Favorites /> } />
