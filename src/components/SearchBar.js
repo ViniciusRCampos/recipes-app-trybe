@@ -2,17 +2,17 @@ import React, { useContext, useCallback } from 'react';
 import MyContext from '../context/myContext';
 
 export default function SearchBar() {
-  const { handleRadio, handleSearch, search, radio, setRecipes } = useContext(MyContext);
-
+  const { handleRadio, setInputSearch, inputSearch, radio,
+    setRecipes } = useContext(MyContext);
   const selectEndPoint = useCallback(() => {
     if (window.location.pathname.includes('meals')) {
       switch (radio) {
       case 'ingredient':
-        return `https://www.themealdb.com/api/json/v1/1/filter.php?i=${search}`;
+        return `https://www.themealdb.com/api/json/v1/1/filter.php?i=${inputSearch}`;
       case 'name':
-        return `https://www.themealdb.com/api/json/v1/1/search.php?s=${search}`;
+        return `https://www.themealdb.com/api/json/v1/1/search.php?s=${inputSearch}`;
       case 'letter':
-        return `https://www.themealdb.com/api/json/v1/1/search.php?f=${search}`;
+        return `https://www.themealdb.com/api/json/v1/1/search.php?f=${inputSearch}`;
       default:
         break;
       }
@@ -20,16 +20,16 @@ export default function SearchBar() {
     if (window.location.pathname.includes('drinks')) {
       switch (radio) {
       case 'ingredient':
-        return `https://www.thecocktaildb.com/api/json/v1/1/filter.php?i=${search}`;
+        return `https://www.thecocktaildb.com/api/json/v1/1/filter.php?i=${inputSearch}`;
       case 'name':
-        return `https://www.thecocktaildb.com/api/json/v1/1/search.php?s=${search}`;
+        return `https://www.thecocktaildb.com/api/json/v1/1/search.php?s=${inputSearch}`;
       case 'letter':
-        return `https://www.thecocktaildb.com/api/json/v1/1/search.php?f=${search}`;
+        return `https://www.thecocktaildb.com/api/json/v1/1/search.php?f=${inputSearch}`;
       default:
         break;
       }
     }
-  }, [radio, search]);
+  }, [radio, inputSearch]);
 
   const API = useCallback(
     async () => {
@@ -66,6 +66,10 @@ export default function SearchBar() {
     API();
   }, [API]);
 
+  const handleSearch = ({ target: { value } }) => {
+    setInputSearch(value);
+  };
+
   return (
     <section>
 
@@ -74,7 +78,7 @@ export default function SearchBar() {
         <input
           data-testid="search-input"
           type="text"
-          value={ search }
+          value={ inputSearch }
           name="search"
           id="search"
           onChange={ handleSearch }
@@ -88,7 +92,7 @@ export default function SearchBar() {
             type="radio"
             id="ingredient"
             name="filter"
-            value="ingredient"
+            defaultValue="ingredient"
             data-testid="ingredient-search-radio"
             onChange={ handleRadio }
           />
@@ -99,7 +103,7 @@ export default function SearchBar() {
             type="radio"
             id="name"
             name="filter"
-            value="name"
+            defaultValue="name"
             data-testid="name-search-radio"
             onChange={ handleRadio }
           />
@@ -110,7 +114,7 @@ export default function SearchBar() {
             type="radio"
             id="first_letter"
             name="filter"
-            value="letter"
+            defaultValue="letter"
             data-testid="first-letter-search-radio"
             onChange={ handleRadio }
           />
