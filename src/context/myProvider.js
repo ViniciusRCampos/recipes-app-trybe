@@ -12,7 +12,7 @@ function MyProvider({ children }) {
     email: '',
     password: '',
   });
-  const [search, setSearch] = useState('');
+  const [inputSearch, setInputSearch] = useState('');
   const [radio, setRadio] = useState('');
   const [recipes, setRecipes] = useState([]);
   const [initialMeal, setInitialMeal] = useState([]);
@@ -56,16 +56,16 @@ function MyProvider({ children }) {
         setGetDrinkCat(getC.drinks.slice(0, +'5'));
       }
     };
-    if (radio === 'letter' && search.length > 1) {
+    if (radio === 'letter' && inputSearch.length > 1) {
       global.alert('Your search must have only 1 (one) character');
     }
     // selectEndPoint(); // remover radio e search
     request();
-  }, [radio, search.length]);
+  }, [radio, inputSearch.length]);
 
-  const handleSearch = ({ target: { value } }) => {
-    setSearch(value);
-  };
+  // const handleSearch = ({ target: { value } }) => {
+  //   setSearch(value);
+  // };
 
   const handleRadio = ({ target: { value } }) => {
     setRadio(value);
@@ -89,7 +89,6 @@ function MyProvider({ children }) {
     () => ({
       route,
       login,
-      search,
       radio,
       recipes,
       initialMeal,
@@ -98,12 +97,12 @@ function MyProvider({ children }) {
       getCategory,
       buttonFilter,
       clickedFilter,
+      inputSearch,
+      setInputSearch,
       setButtonFilter,
       handleLogin,
       handleLoginButton,
       handleRadio,
-      handleSearch,
-      // clickSearch,
       handleClickCategory,
       handleClickCat,
       setRecipes,
@@ -113,7 +112,7 @@ function MyProvider({ children }) {
       route,
       getCategory,
       getDrinkCat,
-      search,
+      inputSearch,
       radio,
       recipes,
       initialMeal,
@@ -123,7 +122,6 @@ function MyProvider({ children }) {
       handleClickCategory,
       handleClickCat,
       handleLoginButton,
-      // clickSearch,
     ],
   );
 

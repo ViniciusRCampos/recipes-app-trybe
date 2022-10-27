@@ -6,7 +6,7 @@ import searchIcon from '../images/searchIcon.svg';
 import SearchBar from './SearchBar';
 
 function Header({ title }) {
-  const { handleRadio, handleSearch, search, clickSearch } = useContext(MyContext);
+  const { handleRadio, handleSearch, inputSearch, clickSearch } = useContext(MyContext);
   const [show, setShow] = useState(false);
 
   const path = window.location.pathname;
@@ -40,7 +40,7 @@ function Header({ title }) {
             <SearchBar
               handleRadio={ handleRadio }
               handleSearch={ handleSearch }
-              search={ search }
+              search={ inputSearch }
               clickSearch={ clickSearch }
             />
           )}

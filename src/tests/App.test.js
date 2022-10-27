@@ -39,7 +39,6 @@ describe('If component Header works properly', () => {
     const teste = screen.getByRole('textbox', {
       name: /pesquisar:/i,
     });
-    console.log(teste);
     expect(teste).toBeInTheDocument();
   });
 });

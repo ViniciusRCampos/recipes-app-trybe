@@ -18,6 +18,7 @@ function Recipes() {
     handleClickCat,
   } = useContext(MyContext);
   console.log(pathName, 'pathname');
+  console.log('get', getDrinkCat);
   return (
     <>
 
