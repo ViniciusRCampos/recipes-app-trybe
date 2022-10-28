@@ -63,11 +63,18 @@
 	}
 } */
 
+.start-button {
+	position: fixed;
+	bottom: 0;
+	z-index: 1;
+}
+
 .carousel {
   border: 1px solid black;
   display: flex;
   height: 100px;
   margin-bottom: 100px;
+  margin-top: 20px;
   overflow-x: scroll;
   width: 200px;
 }
