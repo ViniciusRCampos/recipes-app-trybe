@@ -1,13 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
 import Footer from '../components/Footer';
-// import Recomends from '../components/Recomends';
+import { getFirstTwo, getMealsFirst } from '../helpers/Api';
 
 const MEAL = ['strMealThumb', 'strMeal'];
 const DRINK = ['strDrinkThumb', 'strDrink'];
-
-// const recomendMeal = 'https://www.themealdb.com/api/json/v1/1/search.php?s=';
-// const recomendDrink = 'https://www.thecocktaildb.com/api/json/v1/1/search.php?s=';
 
 function RecipeDetails() {
   const { location: { pathname } } = useHistory();
@@ -17,33 +14,47 @@ function RecipeDetails() {
   const [recipeCat, setRecipeCat] = useState('');
   const [recipeInstr, setRecipeInstr] = useState([]);
   const [recipeVideo, setRecipeVideo] = useState([]);
-  // const [mealRecomend, setMealRecomend] = useState();
-  // const [drinkRecomend, setDrinkRecomend] = useState();
+  // const [indexCarousel, setIndexCarousel] = useState(0);
+
   const type = pathname.split('/')[1];
   const id = pathname.split('/')[2];
 
-  async function result() {
-    let response = '';
-    let data = '';
-    if (type === 'meals') {
-      response = await fetch(`https://www.themealdb.com/api/json/v1/1/lookup.php?i=${id}`);
-      data = await response.json();
-      setRecipeImg(data[type][0][MEAL[0]]);
-      setRecipeName(data[type][0][MEAL[1]]);
-      setRecipeCat(data[type][0].strCategory);
-      setRecipeInstr(data[type][0].strInstructions.split('STEP'));
-      setRecipeVideo(data[type][0].strYoutube.replace('watch?v=', 'embed/'));
-    } else {
-      response = await fetch(`https://www.thecocktaildb.com/api/json/v1/1/lookup.php?i=${id}`);
-      data = await response.json();
-      setRecipeImg(data[type][0][DRINK[0]]);
-      setRecipeName(data[type][0][DRINK[1]]);
-      setRecipeCat(data[type][0].strAlcoholic);
-      setRecipeInstr(data[type][0].strInstructions);
-    }
+  const [recommended, setRecommended] = useState([]);
 
-    setRecipe(...data[type]);
-  }
+  // const result = () => useCallback(async () => {
+  //   let response = '';
+  //   let data = '';
+  //   if (type === 'meals') {
+  //     response = await fetch(`https://www.themealdb.com/api/json/v1/1/lookup.php?i=${id}`);
+  //     data = await response.json();
+  //     setRecipeImg(data[type][0][MEAL[0]]);
+  //     setRecipeName(data[type][0][MEAL[1]]);
+  //     setRecipeCat(data[type][0].strCategory);
+  //     setRecipeInstr(data[type][0].strInstructions.split('STEP'));
+  //     setRecipeVideo(data[type][0].strYoutube.replace('watch?v=', 'embed/'));
+  //   } else {
+  //     response = await fetch(`https://www.thecocktaildb.com/api/json/v1/1/lookup.php?i=${id}`);
+  //     data = await response.json();
+  //     setRecipeImg(data[type][0][DRINK[0]]);
+  //     setRecipeName(data[type][0][DRINK[1]]);
+  //     setRecipeCat(data[type][0].strAlcoholic);
+  //     setRecipeInstr(data[type][0].strInstructions);
+  //   }
+  //   setRecipe(...data[type]);
+  // }, [result]);
+
+  useEffect(() => {
+    const getRecommended = async () => {
+      if (window.location.pathname.includes('meals')) {
+        const teste = await getFirstTwo();
+        setRecommended(teste.drinks.slice(0, +'6'));
+      } else {
+        const teste2 = await getMealsFirst();
+        setRecommended(teste2.meals.slice(0, +'6'));
+      }
+    };
+    getRecommended();
+  }, []);
   /*
   async function recomends(recomend) {
     const response = await fetch(`${recomend}${id}`);
@@ -74,17 +85,30 @@ function RecipeDetails() {
   };
 
   useEffect(() => {
-    /* if (type === 'meals') {
-      recomends(recomendDrink);
-    } else {
-      recomends(recomendMeal);
-    } */
-    result();
-  }, []);
-  /*
-  console.log('Meals Recomend: ', mealRecomend);
-  console.log('Drink Recomend: ', drinkRecomend);
-  */
+    const result = async () => {
+      let response = '';
+      let data = '';
+      if (type === 'meals') {
+        response = await fetch(`https://www.themealdb.com/api/json/v1/1/lookup.php?i=${id}`);
+        data = await response.json();
+        setRecipeImg(data[type][0][MEAL[0]]);
+        setRecipeName(data[type][0][MEAL[1]]);
+        setRecipeCat(data[type][0].strCategory);
+        setRecipeInstr(data[type][0].strInstructions.split('STEP'));
+        setRecipeVideo(data[type][0].strYoutube.replace('watch?v=', 'embed/'));
+      } else {
+        response = await fetch(`https://www.thecocktaildb.com/api/json/v1/1/lookup.php?i=${id}`);
+        data = await response.json();
+        setRecipeImg(data[type][0][DRINK[0]]);
+        setRecipeName(data[type][0][DRINK[1]]);
+        setRecipeCat(data[type][0].strAlcoholic);
+        setRecipeInstr(data[type][0].strInstructions);
+      }
+      setRecipe(...data[type]);
+    }; result();
+  }, [id, type]);
+
+  console.log(recommended, 'DRINKS');
   return (
     <>
       <h1>Recipe Details</h1>
@@ -125,10 +149,92 @@ function RecipeDetails() {
           />
         }
       </div>
-      <div>
-        {/* type === 'meals' ? recomends(recomendMeal) : recomends(recomendDrink) */}
-        {/* <Recomends id={ id } type={ type } /> */}
-      </div>
+      {/* <div>
+        <div className="carousel">
+          <button
+            type="button"
+            disabled={ indexCarousel === 0 }
+            onClick={ () => {
+              console.log(indexCarousel, 'antes');
+              setIndexCarousel(indexCarousel - 1);
+            } }
+          >
+            Previous
+          </button>
+          <div>
+            <img
+              src={
+                recommended[indexCarousel]?.strDrinkThumb
+                || recommended[indexCarousel]?.strMealThumb
+              }
+              alt={
+                recommended[indexCarousel]?.strDrink
+                || recommended[indexCarousel]?.strMeal
+              }
+              width="100px"
+            />
+            <p
+              data-testid={ `${indexCarousel}-recommendation-title` }
+            >
+              {recommended[indexCarousel]?.strDrink
+              || recommended[indexCarousel]?.strMeal}
+
+            </p>
+          </div>
+          <div>
+            <img
+              src={
+                recommended[indexCarousel + 1]?.strDrinkThumb
+                || recommended[indexCarousel + 1]?.strMealThumb
+              }
+              alt={
+                recommended[indexCarousel + 1]?.strDrink
+                || recommended[indexCarousel + 1]?.strMeal
+              }
+              width="100px"
+            />
+            <p
+              data-testid={ `${indexCarousel + 1}-recommendation-title` }
+            >
+              {recommended[indexCarousel + 1]?.strDrink
+              || recommended[indexCarousel + 1]?.strMeal}
+
+            </p>
+          </div>
+          <button
+            type="button"
+            disabled={ indexCarousel + 1 === recommended.length - 2 }
+            onClick={ () => {
+              console.log(indexCarousel, 'depois');
+              setIndexCarousel(indexCarousel + 1);
+            } }
+          >
+            Next
+          </button>
+        </div> */}
+      <span>
+        <div className="carousel">
+          { recommended.map((element, index) => (
+            <div
+              className="carousel-card"
+              data-testid={ `${index}-recommendation-card` }
+              key={ element.idDrink || element.idMeal }
+
+            >
+              <p data-testid={ `${index}-recommendation-title` }>
+                {element.strDrink || element.strMeal}
+
+              </p>
+              <img
+                src={ element.strDrinkThumb || element.strMealThumb }
+                alt={ element.strDrink || element.strMeal }
+                width="80px"
+              />
+            </div>
+          ))}
+          {/* </div> */}
+        </div>
+      </span>
       <Footer />
     </>
   );
