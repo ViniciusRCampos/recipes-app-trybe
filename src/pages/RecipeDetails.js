@@ -14,34 +14,21 @@ function RecipeDetails() {
   const [recipeCat, setRecipeCat] = useState('');
   const [recipeInstr, setRecipeInstr] = useState([]);
   const [recipeVideo, setRecipeVideo] = useState([]);
-  // const [indexCarousel, setIndexCarousel] = useState(0);
+  const [doneRecipes, setDoneRecipes] = useState([]);
 
   const type = pathname.split('/')[1];
   const id = pathname.split('/')[2];
 
   const [recommended, setRecommended] = useState([]);
 
-  // const result = () => useCallback(async () => {
-  //   let response = '';
-  //   let data = '';
-  //   if (type === 'meals') {
-  //     response = await fetch(`https://www.themealdb.com/api/json/v1/1/lookup.php?i=${id}`);
-  //     data = await response.json();
-  //     setRecipeImg(data[type][0][MEAL[0]]);
-  //     setRecipeName(data[type][0][MEAL[1]]);
-  //     setRecipeCat(data[type][0].strCategory);
-  //     setRecipeInstr(data[type][0].strInstructions.split('STEP'));
-  //     setRecipeVideo(data[type][0].strYoutube.replace('watch?v=', 'embed/'));
-  //   } else {
-  //     response = await fetch(`https://www.thecocktaildb.com/api/json/v1/1/lookup.php?i=${id}`);
-  //     data = await response.json();
-  //     setRecipeImg(data[type][0][DRINK[0]]);
-  //     setRecipeName(data[type][0][DRINK[1]]);
-  //     setRecipeCat(data[type][0].strAlcoholic);
-  //     setRecipeInstr(data[type][0].strInstructions);
-  //   }
-  //   setRecipe(...data[type]);
-  // }, [result]);
+  useEffect(() => {
+    const doneRecipesStorage = window.localStorage.getItem('doneRecipes');
+    if (JSON.parse(doneRecipesStorage)) {
+      setDoneRecipes([JSON.parse(doneRecipesStorage)]);
+    } else {
+      setDoneRecipes([]);
+    }
+  }, []);
 
   useEffect(() => {
     const getRecommended = async () => {
@@ -55,18 +42,7 @@ function RecipeDetails() {
     };
     getRecommended();
   }, []);
-  /*
-  async function recomends(recomend) {
-    const response = await fetch(`${recomend}${id}`);
-    const data = await response.json();
-    console.log('Data API: ', data);
-    if (type === 'meals') {
-      setMealRecomend(data);
-    } else {
-      setDrinkRecomend(data);
-    }
-  }
-  */
+
   const ingredientMesure = () => {
     const ingMes = [];
     const NUM_INGR_MESU = 20;
@@ -108,7 +84,6 @@ function RecipeDetails() {
     }; result();
   }, [id, type]);
 
-  console.log(recommended, 'DRINKS');
   return (
     <>
       <h1>Recipe Details</h1>
@@ -117,6 +92,7 @@ function RecipeDetails() {
           data-testid="recipe-photo"
           src={ recipeImg }
           alt="Pic Recipe"
+          width="300px"
         />
         <h2 data-testid="recipe-title">{ recipeName }</h2>
         <p data-testid="recipe-category">{ recipeCat }</p>
@@ -149,69 +125,20 @@ function RecipeDetails() {
           />
         }
       </div>
-      {/* <div>
-        <div className="carousel">
-          <button
-            type="button"
-            disabled={ indexCarousel === 0 }
-            onClick={ () => {
-              console.log(indexCarousel, 'antes');
-              setIndexCarousel(indexCarousel - 1);
-            } }
-          >
-            Previous
-          </button>
-          <div>
-            <img
-              src={
-                recommended[indexCarousel]?.strDrinkThumb
-                || recommended[indexCarousel]?.strMealThumb
-              }
-              alt={
-                recommended[indexCarousel]?.strDrink
-                || recommended[indexCarousel]?.strMeal
-              }
-              width="100px"
-            />
-            <p
-              data-testid={ `${indexCarousel}-recommendation-title` }
-            >
-              {recommended[indexCarousel]?.strDrink
-              || recommended[indexCarousel]?.strMeal}
 
-            </p>
-          </div>
-          <div>
-            <img
-              src={
-                recommended[indexCarousel + 1]?.strDrinkThumb
-                || recommended[indexCarousel + 1]?.strMealThumb
-              }
-              alt={
-                recommended[indexCarousel + 1]?.strDrink
-                || recommended[indexCarousel + 1]?.strMeal
-              }
-              width="100px"
-            />
-            <p
-              data-testid={ `${indexCarousel + 1}-recommendation-title` }
-            >
-              {recommended[indexCarousel + 1]?.strDrink
-              || recommended[indexCarousel + 1]?.strMeal}
-
-            </p>
-          </div>
+      {
+        !doneRecipes.some((element) => element.id === Number(id))
+        && (
           <button
+            data-testid="start-recipe-btn"
             type="button"
-            disabled={ indexCarousel + 1 === recommended.length - 2 }
-            onClick={ () => {
-              console.log(indexCarousel, 'depois');
-              setIndexCarousel(indexCarousel + 1);
-            } }
+            className="start-button"
           >
-            Next
+            Start Recipe
           </button>
-        </div> */}
+        )
+      }
+
       <span>
         <div className="carousel">
           { recommended.map((element, index) => (
