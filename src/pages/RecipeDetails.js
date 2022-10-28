@@ -162,6 +162,12 @@ function RecipeDetails() {
           {/* </div> */}
         </div>
       </span>
+      <button
+        type="button"
+        data-testid="start-recipe-btn"
+      >
+        Continue Recipe
+      </button>
       <Footer />
     </>
   );
