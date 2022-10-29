@@ -28,16 +28,19 @@ function RecipeDetails() {
 
   useEffect(() => {
     const renderButton = () => {
-      // Responsável por verificar se a receita já está em Progresso e renderiza texto correto no botão, start ou continue.
-      // por eqnt forcei essa verificação atrávez do estado, quando salvar as informações no localStorage, vamos verificar de lá e não pelo estado, acredito que seja isso..
-      const exist = Object.values(inProgressRecipes)
+      const local = JSON.parse(localStorage.getItem('inProgressRecipes')) ?? {
+        meals: {},
+        drinks: {},
+      };
+      console.log(local);
+      const exist = Object.values(local)
         .find((e) => Object.keys(e).some((el) => el === id));
-      // console.log(exist, id);
+      console.log(exist, id);
 
-      if (exist === undefined) {
-        setStartOrContinue('Start Recipe');
-      } else {
+      if (local !== undefined && exist !== undefined) {
         setStartOrContinue('Continue Recipe');
+      } else {
+        setStartOrContinue('Start Recipe');
       }
     };
     renderButton();
@@ -52,7 +55,7 @@ function RecipeDetails() {
     }
 
     if (pathname.includes('/drinks')) {
-      const sendTest = { id: 21312 };
+      const sendTest = { [Number(id)]: [1, 2] };
       setInProgressRecipes({
         ...inProgressRecipes,
         drinks: { ...inProgressRecipes.drinks, ...sendTest },
@@ -60,7 +63,7 @@ function RecipeDetails() {
       return route.push(`${pathname}/in-progress`);
     }
 
-    const sendTest = { id: 21312 };
+    const sendTest = { [Number(id)]: [1, 2] };
     setInProgressRecipes({
       ...inProgressRecipes,
       meals: { ...inProgressRecipes.meals, ...sendTest },
@@ -132,8 +135,6 @@ function RecipeDetails() {
       setRecipe(...data[type]);
     }; result();
   }, [id, type]);
-
-  console.log(recipe);
 
   return (
     <>
