@@ -12,7 +12,7 @@ function RecipeDetails() {
 
   const route = useHistory();
   const { location: { pathname } } = useHistory();
-  const [recipe, setRecipe] = useState('');
+  const [recipe, setRecipe] = useState({});
   const [recipeName, setRecipeName] = useState('');
   const [recipeImg, setRecipeImg] = useState('');
   const [recipeCat, setRecipeCat] = useState('');
@@ -47,13 +47,24 @@ function RecipeDetails() {
     // começando a lógica para salvar a receita no localStorage caso o botão seja o start recipe, e só redirecionar caso já tenha essa receita em progresso salva
     const exist = Object.values(inProgressRecipes)
       .find((e) => Object.keys(e).some((el) => el === id));
-
-    if (exist === undefined) {
-      setInProgressRecipes({
-        add: 'foi',
-      });
-      route.push(`${pathname}/in-progress`);
+    if (exist !== undefined) {
+      return route.push(`${pathname}/in-progress`);
     }
+
+    if (pathname.includes('/drinks')) {
+      const sendTest = { id: 21312 };
+      setInProgressRecipes({
+        ...inProgressRecipes,
+        drinks: { ...inProgressRecipes.drinks, ...sendTest },
+      });
+      return route.push(`${pathname}/in-progress`);
+    }
+
+    const sendTest = { id: 21312 };
+    setInProgressRecipes({
+      ...inProgressRecipes,
+      meals: { ...inProgressRecipes.meals, ...sendTest },
+    });
     return route.push(`${pathname}/in-progress`);
   };
 
@@ -122,7 +133,7 @@ function RecipeDetails() {
     }; result();
   }, [id, type]);
 
-  console.log(Object.entries(inProgressRecipes));
+  console.log(recipe);
 
   return (
     <>
