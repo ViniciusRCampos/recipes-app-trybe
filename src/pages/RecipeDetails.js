@@ -1,25 +1,75 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
 import Footer from '../components/Footer';
 import { getFirstTwo, getMealsFirst } from '../helpers/Api';
+import MyContext from '../context/myContext';
 
 const MEAL = ['strMealThumb', 'strMeal'];
 const DRINK = ['strDrinkThumb', 'strDrink'];
 
 function RecipeDetails() {
+  const { inProgressRecipes, setInProgressRecipes } = useContext(MyContext);
+
+  const route = useHistory();
   const { location: { pathname } } = useHistory();
-  const [recipe, setRecipe] = useState('');
+  const [recipe, setRecipe] = useState({});
   const [recipeName, setRecipeName] = useState('');
   const [recipeImg, setRecipeImg] = useState('');
   const [recipeCat, setRecipeCat] = useState('');
   const [recipeInstr, setRecipeInstr] = useState([]);
   const [recipeVideo, setRecipeVideo] = useState([]);
   const [doneRecipes, setDoneRecipes] = useState([]);
+  const [startOrContinue, setStartOrContinue] = useState('');
 
   const type = pathname.split('/')[1];
   const id = pathname.split('/')[2];
 
   const [recommended, setRecommended] = useState([]);
+
+  useEffect(() => {
+    const renderButton = () => {
+      const local = JSON.parse(localStorage.getItem('inProgressRecipes')) ?? {
+        meals: {},
+        drinks: {},
+      };
+      console.log(local);
+      const exist = Object.values(local)
+        .find((e) => Object.keys(e).some((el) => el === id));
+      console.log(exist, id);
+
+      if (local !== undefined && exist !== undefined) {
+        setStartOrContinue('Continue Recipe');
+      } else {
+        setStartOrContinue('Start Recipe');
+      }
+    };
+    renderButton();
+  }, [id, inProgressRecipes]);
+
+  const onClickStartOrContinue = () => {
+    // começando a lógica para salvar a receita no localStorage caso o botão seja o start recipe, e só redirecionar caso já tenha essa receita em progresso salva
+    const exist = Object.values(inProgressRecipes)
+      .find((e) => Object.keys(e).some((el) => el === id));
+    if (exist !== undefined) {
+      return route.push(`${pathname}/in-progress`);
+    }
+
+    if (pathname.includes('/drinks')) {
+      const sendTest = { [Number(id)]: [1, 2] };
+      setInProgressRecipes({
+        ...inProgressRecipes,
+        drinks: { ...inProgressRecipes.drinks, ...sendTest },
+      });
+      return route.push(`${pathname}/in-progress`);
+    }
+
+    const sendTest = { [Number(id)]: [1, 2] };
+    setInProgressRecipes({
+      ...inProgressRecipes,
+      meals: { ...inProgressRecipes.meals, ...sendTest },
+    });
+    return route.push(`${pathname}/in-progress`);
+  };
 
   useEffect(() => {
     const doneRecipesStorage = window.localStorage.getItem('doneRecipes');
@@ -67,6 +117,7 @@ function RecipeDetails() {
       if (type === 'meals') {
         response = await fetch(`https://www.themealdb.com/api/json/v1/1/lookup.php?i=${id}`);
         data = await response.json();
+        console.log(data);
         setRecipeImg(data[type][0][MEAL[0]]);
         setRecipeName(data[type][0][MEAL[1]]);
         setRecipeCat(data[type][0].strCategory);
@@ -75,6 +126,7 @@ function RecipeDetails() {
       } else {
         response = await fetch(`https://www.thecocktaildb.com/api/json/v1/1/lookup.php?i=${id}`);
         data = await response.json();
+        console.log(data);
         setRecipeImg(data[type][0][DRINK[0]]);
         setRecipeName(data[type][0][DRINK[1]]);
         setRecipeCat(data[type][0].strAlcoholic);
@@ -126,19 +178,6 @@ function RecipeDetails() {
         }
       </div>
 
-      {
-        !doneRecipes.some((element) => element.id === Number(id))
-        && (
-          <button
-            data-testid="start-recipe-btn"
-            type="button"
-            className="start-button"
-          >
-            Start Recipe
-          </button>
-        )
-      }
-
       <span>
         <div className="carousel">
           { recommended.map((element, index) => (
@@ -162,6 +201,22 @@ function RecipeDetails() {
           {/* </div> */}
         </div>
       </span>
+
+      {
+        !doneRecipes.some((element) => element.id === Number(id))
+        && (
+          <button
+            data-testid="start-recipe-btn"
+            type="button"
+            className="start-button"
+            onClick={ onClickStartOrContinue }
+          >
+            {
+              startOrContinue // estado que renderiza texto correto, Start or Continue
+            }
+          </button>
+        )
+      }
       <Footer />
     </>
   );
