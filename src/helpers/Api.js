@@ -19,7 +19,6 @@ export const getCat = async () => {
 export const getMealsFirst = async () => {
   const initial = await fetch('https://www.themealdb.com/api/json/v1/1/search.php?s=');
   const response = await initial.json();
-  console.log(response, 'meals');
   return response;
 };
 
@@ -78,6 +77,20 @@ export const letterDrinkApi = async (search) => { // aqui, verificar a API
   const initial2 = await fetch(`https://www.thecocktaildb.com/api/json/v1/1/search.php?f=${search}`);
   const response = await initial2.json();
   return response;
+};
+
+export const recipeMeals = async (id) => {
+  const response = await fetch(`https://www.themealdb.com/api/json/v1/1/lookup.php?i=${id}`);
+  const data = await response.json();
+  const results = [...data.meals];
+  return results;
+};
+export const recipeDrinks = async (id) => {
+  const response = await fetch(`https://www.thecocktaildb.com/api/json/v1/1/lookup.php?i=${id}`);
+  const data = await response.json();
+  const results = [...data.drinks];
+  console.log(results, 'drinks API');
+  return results;
 };
 
 // export const selectEndPoint = async (radio, search) => {

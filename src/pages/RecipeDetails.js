@@ -1,11 +1,11 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
 import Footer from '../components/Footer';
-import { getFirstTwo, getMealsFirst } from '../helpers/Api';
+import { getFirstTwo, getMealsFirst, recipeDrinks, recipeMeals } from '../helpers/Api';
 import MyContext from '../context/myContext';
+import shareIcon from '../images/shareIcon.svg';
 
-const MEAL = ['strMealThumb', 'strMeal'];
-const DRINK = ['strDrinkThumb', 'strDrink'];
+const copy = require('clipboard-copy');
 
 function RecipeDetails() {
   const { inProgressRecipes, setInProgressRecipes } = useContext(MyContext);
@@ -13,18 +13,13 @@ function RecipeDetails() {
   const route = useHistory();
   const { location: { pathname } } = useHistory();
   const [recipe, setRecipe] = useState({});
-  const [recipeName, setRecipeName] = useState('');
-  const [recipeImg, setRecipeImg] = useState('');
-  const [recipeCat, setRecipeCat] = useState('');
-  const [recipeInstr, setRecipeInstr] = useState([]);
-  const [recipeVideo, setRecipeVideo] = useState([]);
   const [doneRecipes, setDoneRecipes] = useState([]);
   const [startOrContinue, setStartOrContinue] = useState('');
+  const [copied, setCopied] = useState(false);
+  const [recommended, setRecommended] = useState([]);
 
   const type = pathname.split('/')[1];
   const id = pathname.split('/')[2];
-
-  const [recommended, setRecommended] = useState([]);
 
   useEffect(() => {
     const renderButton = () => {
@@ -32,11 +27,8 @@ function RecipeDetails() {
         meals: {},
         drinks: {},
       };
-      console.log(local);
       const exist = Object.values(local)
         .find((e) => Object.keys(e).some((el) => el === id));
-      console.log(exist, id);
-
       if (local !== undefined && exist !== undefined) {
         setStartOrContinue('Continue Recipe');
       } else {
@@ -83,11 +75,11 @@ function RecipeDetails() {
   useEffect(() => {
     const getRecommended = async () => {
       if (window.location.pathname.includes('meals')) {
-        const teste = await getFirstTwo();
-        setRecommended(teste.drinks.slice(0, +'6'));
+        const carousel = await getFirstTwo();
+        setRecommended(carousel.drinks.slice(0, +'6'));
       } else {
-        const teste2 = await getMealsFirst();
-        setRecommended(teste2.meals.slice(0, +'6'));
+        const carousel = await getMealsFirst();
+        setRecommended(carousel.meals.slice(0, +'6'));
       }
     };
     getRecommended();
@@ -112,27 +104,14 @@ function RecipeDetails() {
 
   useEffect(() => {
     const result = async () => {
-      let response = '';
-      let data = '';
+      let recipeData = '';
       if (type === 'meals') {
-        response = await fetch(`https://www.themealdb.com/api/json/v1/1/lookup.php?i=${id}`);
-        data = await response.json();
-        console.log(data);
-        setRecipeImg(data[type][0][MEAL[0]]);
-        setRecipeName(data[type][0][MEAL[1]]);
-        setRecipeCat(data[type][0].strCategory);
-        setRecipeInstr(data[type][0].strInstructions.split('STEP'));
-        setRecipeVideo(data[type][0].strYoutube.replace('watch?v=', 'embed/'));
+        recipeData = await recipeMeals(id);
+        recipeData[0].strYoutube = recipeData[0].strYoutube.replace('watch?v=', 'embed/');
       } else {
-        response = await fetch(`https://www.thecocktaildb.com/api/json/v1/1/lookup.php?i=${id}`);
-        data = await response.json();
-        console.log(data);
-        setRecipeImg(data[type][0][DRINK[0]]);
-        setRecipeName(data[type][0][DRINK[1]]);
-        setRecipeCat(data[type][0].strAlcoholic);
-        setRecipeInstr(data[type][0].strInstructions);
+        recipeData = await recipeDrinks(id);
       }
-      setRecipe(...data[type]);
+      setRecipe(recipeData[0]);
     }; result();
   }, [id, type]);
 
@@ -142,12 +121,36 @@ function RecipeDetails() {
       <div>
         <img
           data-testid="recipe-photo"
-          src={ recipeImg }
+          src={ recipe.strMealThumb || recipe.strDrinkThumb }
           alt="Pic Recipe"
           width="300px"
         />
-        <h2 data-testid="recipe-title">{ recipeName }</h2>
-        <p data-testid="recipe-category">{ recipeCat }</p>
+        <h2 data-testid="recipe-title">{ recipe.strMeal || recipe.strDrink }</h2>
+        <div>
+          <button
+            data-testid="share-btn"
+            type="button"
+            onClick={ () => {
+              copy(`http://localhost:3000${window.location.pathname}`);
+              setCopied(true);
+            } }
+          >
+            <img src={ shareIcon } alt="share icon" />
+          </button>
+          { copied && (<p>Link copied!</p>) }
+          <button
+            data-testid="favorite-btn"
+            type="button"
+            // checked={ favorite.some((element) => element.id === Number(id)) }
+          >
+            favorite
+          </button>
+        </div>
+        <p data-testid="recipe-category">
+          { type === 'drinks'
+            ? recipe.strAlcoholic
+            : recipe.strCategory }
+        </p>
         <div>
           { ingredientMesure().map((show, index) => (
             <p
@@ -159,9 +162,7 @@ function RecipeDetails() {
           )) }
         </div>
         <div data-testid="instructions">
-          { type === 'meals' ? recipeInstr.map((inst, ind) => (
-            <p key={ ind }>{`${inst}`}</p>
-          )) : <p>{`${recipeInstr}`}</p> }
+          {recipe.strInstructions}
         </div>
         {
           type === 'meals'
@@ -169,7 +170,7 @@ function RecipeDetails() {
             data-testid="video"
             width="560"
             height="315"
-            src={ recipeVideo }
+            src={ recipe.strYoutube }
             title="YouTube video player"
             frameBorder="0"
             allow="autoplay; encrypted-media; gyroscope; picture-in-picture"
@@ -177,31 +178,26 @@ function RecipeDetails() {
           />
         }
       </div>
+      <div className="carousel">
+        { recommended.map((element, index) => (
+          <div
+            className="carousel-card"
+            data-testid={ `${index}-recommendation-card` }
+            key={ element.idDrink || element.idMeal }
 
-      <span>
-        <div className="carousel">
-          { recommended.map((element, index) => (
-            <div
-              className="carousel-card"
-              data-testid={ `${index}-recommendation-card` }
-              key={ element.idDrink || element.idMeal }
+          >
+            <p data-testid={ `${index}-recommendation-title` }>
+              {element.strDrink || element.strMeal}
 
-            >
-              <p data-testid={ `${index}-recommendation-title` }>
-                {element.strDrink || element.strMeal}
-
-              </p>
-              <img
-                src={ element.strDrinkThumb || element.strMealThumb }
-                alt={ element.strDrink || element.strMeal }
-                width="80px"
-              />
-            </div>
-          ))}
-          {/* </div> */}
-        </div>
-      </span>
-
+            </p>
+            <img
+              src={ element.strDrinkThumb || element.strMealThumb }
+              alt={ element.strDrink || element.strMeal }
+              width="80px"
+            />
+          </div>
+        ))}
+      </div>
       {
         !doneRecipes.some((element) => element.id === Number(id))
         && (
@@ -211,9 +207,7 @@ function RecipeDetails() {
             className="start-button"
             onClick={ onClickStartOrContinue }
           >
-            {
-              startOrContinue // estado que renderiza texto correto, Start or Continue
-            }
+            { startOrContinue }
           </button>
         )
       }
