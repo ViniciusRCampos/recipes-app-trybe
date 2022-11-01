@@ -34,6 +34,16 @@ function MyProvider({ children }) {
       // 53026: '',
     },
   });
+  // começo da logica da 34 - LocalStorage FavoriteRecipes
+
+  // const [favorite, setFavorite] = useState([]);
+  // const [favoriteList, setFavoriteList] = useState([]);
+
+  // const handleFavoriteClick = ({ target }) => {
+  //   target.checked ? addFavoriteRecipe(favorite) : removeFavoriteRecipe(favorite);
+  //   const updateFavorite = getLocalStorage('favoriteRecipes');
+  //   setFavoriteList(JSON.parse(updateFavorite));
+  // };
 
   const handleClickCat = useMemo(() => async (event) => {
     if (clickedFilter === event) {
@@ -92,7 +102,7 @@ function MyProvider({ children }) {
   };
 
   const handleLoginButton = useCallback(() => {
-    setLocalStorage({
+    setLocalStorage('user', {
       email: login.email,
     });
     route.push('/meals');
