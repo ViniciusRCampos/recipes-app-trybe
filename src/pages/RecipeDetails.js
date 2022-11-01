@@ -1,12 +1,17 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { useHistory } from 'react-router';
 import Footer from '../components/Footer';
 import { getFirstTwo, getMealsFirst, recipeDrinks, recipeMeals } from '../helpers/Api';
 import shareIcon from '../images/shareIcon.svg';
+import MyContext from '../context/myContext';
+import whiteHeart from '../images/whiteHeartIcon.svg';
+import blackHeart from '../images/blackHeartIcon.svg';
 
 const copy = require('clipboard-copy');
 
 function RecipeDetails() {
+  const { setFavorite, favoriteStorage, setFavoriteStorage,
+    handleFavoriteClick } = useContext(MyContext);
   const route = useHistory();
   const { location: { pathname } } = useHistory();
   const [recipe, setRecipe] = useState({});
@@ -14,8 +19,9 @@ function RecipeDetails() {
   const [startOrContinue, setStartOrContinue] = useState('');
   const [copied, setCopied] = useState(false);
   const [recommended, setRecommended] = useState([]);
+  const [favoriteList, setFavoriteList] = useState([]);
 
-  const type = pathname.split('/')[1];
+  const type = pathname.includes('meals') ? 'meal' : 'drink';
   const id = pathname.split('/')[2];
 
   const ingredientMesure = () => {
@@ -103,15 +109,30 @@ function RecipeDetails() {
   useEffect(() => {
     const result = async () => {
       let recipeData = '';
-      if (type === 'meals') {
+      if (type === 'meal') {
         recipeData = await recipeMeals(id);
         recipeData[0].strYoutube = recipeData[0].strYoutube.replace('watch?v=', 'embed/');
       } else {
         recipeData = await recipeDrinks(id);
       }
       setRecipe(recipeData[0]);
+      setFavorite({
+        id,
+        type,
+        nationality: recipeData[0].strArea || '',
+        category: recipeData[0].strCategory,
+        alcoholicOrNot: recipeData[0].strAlcoholic || '',
+        name: recipeData[0].strMeal || recipeData[0].strDrink,
+        image: recipeData[0].strMealThumb || recipeData[0].strDrinkThumb,
+      });
     }; result();
-  }, [id, type]);
+    setFavoriteStorage(JSON.parse(localStorage.getItem('favoriteRecipes')));
+  }, [id, type, setFavorite, setFavoriteStorage]);
+
+  useEffect(() => {
+    setFavoriteList(favoriteStorage);
+  }, [favoriteStorage]);
+
   return (
     <>
       <h1>Recipe Details</h1>
@@ -138,13 +159,23 @@ function RecipeDetails() {
           <button
             data-testid="favorite-btn"
             type="button"
-            // checked={ favorite.some((element) => element.id === Number(id)) }
+            checked={ favoriteList.some((element) => element.id === id) }
+            onClick={ handleFavoriteClick }
+            src={ !favoriteList.some(
+              (element) => element.id === id,
+            ) ? whiteHeart : blackHeart }
+            alt="Favorite Icon"
           >
-            favorite
+            <img
+              src={ !favoriteList.some(
+                (element) => element.id === id,
+              ) ? whiteHeart : blackHeart }
+              alt="Favorite Icon"
+            />
           </button>
         </div>
         <p data-testid="recipe-category">
-          { type === 'drinks'
+          { type === 'drink'
             ? recipe.strAlcoholic
             : recipe.strCategory }
         </p>
@@ -162,7 +193,7 @@ function RecipeDetails() {
           {recipe.strInstructions}
         </div>
         {
-          type === 'meals'
+          type === 'meal'
           && <iframe
             data-testid="video"
             width="560"

@@ -2,7 +2,8 @@ import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { useHistory } from 'react-router';
 import myContext from './myContext';
-import { setLocalStorage } from '../helpers/localStorage';
+import { addFavoriteRecipe,
+  removeFavoriteRecipe, setLocalStorage } from '../helpers/localStorage';
 import { getCat, getCategories, getMealsFirst, getFirstTwo,
   drinkFilters, mealFilters } from '../helpers/Api';
 
@@ -24,14 +25,17 @@ function MyProvider({ children }) {
 
   // começo da logica da 34 - LocalStorage FavoriteRecipes
 
-  // const [favorite, setFavorite] = useState([]);
-  // const [favoriteList, setFavoriteList] = useState([]);
+  const [favorite, setFavorite] = useState([]);
+  const [favoriteStorage, setFavoriteStorage] = useState([]);
 
-  // const handleFavoriteClick = ({ target }) => {
-  //   target.checked ? addFavoriteRecipe(favorite) : removeFavoriteRecipe(favorite);
-  //   const updateFavorite = getLocalStorage('favoriteRecipes');
-  //   setFavoriteList(JSON.parse(updateFavorite));
-  // };
+  const handleFavoriteClick = useMemo(() => (event) => {
+    console.log(event);
+    if (!event.target.checked) {
+      addFavoriteRecipe(favorite);
+    } else { removeFavoriteRecipe(favorite); }
+    const updateFavorite = localStorage.getItem('favoriteRecipes');
+    setFavoriteStorage(JSON.parse(updateFavorite));
+  }, [favorite]);
 
   const handleClickCat = useMemo(() => async (event) => {
     if (clickedFilter === event) {
@@ -102,6 +106,8 @@ function MyProvider({ children }) {
 
   const context = useMemo(
     () => ({
+      favoriteStorage,
+      setFavorite,
       route,
       login,
       radio,
@@ -121,8 +127,14 @@ function MyProvider({ children }) {
       handleClickCategory,
       handleClickCat,
       setRecipes,
+      handleFavoriteClick,
+      setFavoriteStorage,
     }),
     [
+      setFavoriteStorage,
+      handleFavoriteClick,
+      favoriteStorage,
+      setFavorite,
       login,
       route,
       getCategory,
