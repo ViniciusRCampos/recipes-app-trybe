@@ -42,7 +42,7 @@ function RecipeDetails() {
       };
       const exist = Object.values(local)
         .find((e) => Object.keys(e).some((el) => el === id));
-      if (local !== undefined && exist !== undefined) {
+      if (exist) {
         setStartOrContinue('Continue Recipe');
       } else {
         setStartOrContinue('Start Recipe');
@@ -59,21 +59,21 @@ function RecipeDetails() {
     };
     const exist = Object.values(local)
       .find((e) => Object.keys(e).some((el) => el === id));
-    if (exist !== undefined) {
+    if (exist) {
       return route.push(`${pathname}/in-progress`);
     }
     if (pathname.includes('/drinks')) {
-      const sendTest = { [Number(id)]: [...ingredients] };
-      window.localStorage.setItem('inProgressRecipes', JSON.stringify({
+      const sendRecipe = { [Number(id)]: [...ingredients] };
+      localStorage.setItem('inProgressRecipes', JSON.stringify({
         ...local,
-        drinks: { ...local.drinks, ...sendTest },
+        drinks: { ...local.drinks, ...sendRecipe },
       }));
       return route.push(`${pathname}/in-progress`);
     }
-    const sendTest = { [Number(id)]: [...ingredients] };
-    window.localStorage.setItem('inProgressRecipes', JSON.stringify({
+    const sendRecipe = { [Number(id)]: [...ingredients] };
+    localStorage.setItem('inProgressRecipes', JSON.stringify({
       ...local,
-      meals: { ...local.meals, ...sendTest },
+      meals: { ...local.meals, ...sendRecipe },
     }));
     return route.push(`${pathname}/in-progress`);
   };
