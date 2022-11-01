@@ -1,15 +1,12 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
 import Footer from '../components/Footer';
 import { getFirstTwo, getMealsFirst, recipeDrinks, recipeMeals } from '../helpers/Api';
-import MyContext from '../context/myContext';
 import shareIcon from '../images/shareIcon.svg';
 
 const copy = require('clipboard-copy');
 
 function RecipeDetails() {
-  const { inProgressRecipes, setInProgressRecipes } = useContext(MyContext);
-
   const route = useHistory();
   const { location: { pathname } } = useHistory();
   const [recipe, setRecipe] = useState({});
@@ -20,6 +17,22 @@ function RecipeDetails() {
 
   const type = pathname.split('/')[1];
   const id = pathname.split('/')[2];
+
+  const ingredientMesure = () => {
+    const ingMes = [];
+    const NUM_INGR_MESU = 20;
+    for (let i = 1; i <= NUM_INGR_MESU; i += 1) {
+      if (recipe[`strIngredient${i}`] !== ''
+          && recipe[`strIngredient${i}`] !== null
+          && recipe[`strIngredient${i}`] !== undefined
+      ) {
+        ingMes.push({
+          ing: recipe[`strIngredient${i}`],
+          mes: recipe[`strMeasure${i}`] });
+      }
+    }
+    return ingMes;
+  };
 
   useEffect(() => {
     const renderButton = () => {
@@ -36,30 +49,32 @@ function RecipeDetails() {
       }
     };
     renderButton();
-  }, [id, inProgressRecipes]);
+  }, [id]);
 
   const onClickStartOrContinue = () => {
-    // começando a lógica para salvar a receita no localStorage caso o botão seja o start recipe, e só redirecionar caso já tenha essa receita em progresso salva
-    const exist = Object.values(inProgressRecipes)
+    const ingredients = ingredientMesure().map((e) => Object.values(e)[0]);
+    const local = JSON.parse(localStorage.getItem('inProgressRecipes')) ?? {
+      meals: {},
+      drinks: {},
+    };
+    const exist = Object.values(local)
       .find((e) => Object.keys(e).some((el) => el === id));
     if (exist !== undefined) {
       return route.push(`${pathname}/in-progress`);
     }
-
     if (pathname.includes('/drinks')) {
-      const sendTest = { [Number(id)]: [1, 2] };
-      setInProgressRecipes({
-        ...inProgressRecipes,
-        drinks: { ...inProgressRecipes.drinks, ...sendTest },
-      });
+      const sendTest = { [Number(id)]: [...ingredients] };
+      window.localStorage.setItem('inProgressRecipes', JSON.stringify({
+        ...local,
+        drinks: { ...local.drinks, ...sendTest },
+      }));
       return route.push(`${pathname}/in-progress`);
     }
-
-    const sendTest = { [Number(id)]: [1, 2] };
-    setInProgressRecipes({
-      ...inProgressRecipes,
-      meals: { ...inProgressRecipes.meals, ...sendTest },
-    });
+    const sendTest = { [Number(id)]: [...ingredients] };
+    window.localStorage.setItem('inProgressRecipes', JSON.stringify({
+      ...local,
+      meals: { ...local.meals, ...sendTest },
+    }));
     return route.push(`${pathname}/in-progress`);
   };
 
@@ -85,23 +100,6 @@ function RecipeDetails() {
     getRecommended();
   }, []);
 
-  const ingredientMesure = () => {
-    const ingMes = [];
-    const NUM_INGR_MESU = 20;
-
-    for (let i = 1; i <= NUM_INGR_MESU; i += 1) {
-      if (recipe[`strIngredient${i}`] !== ''
-          && recipe[`strIngredient${i}`] !== null
-          && recipe[`strIngredient${i}`] !== undefined
-      ) {
-        ingMes.push({
-          ing: recipe[`strIngredient${i}`],
-          mes: recipe[`strMeasure${i}`] });
-      }
-    }
-    return ingMes;
-  };
-
   useEffect(() => {
     const result = async () => {
       let recipeData = '';
@@ -114,7 +112,6 @@ function RecipeDetails() {
       setRecipe(recipeData[0]);
     }; result();
   }, [id, type]);
-
   return (
     <>
       <h1>Recipe Details</h1>

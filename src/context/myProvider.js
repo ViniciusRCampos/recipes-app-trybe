@@ -21,19 +21,7 @@ function MyProvider({ children }) {
   const [getDrinkCat, setGetDrinkCat] = useState([]);
   const [buttonFilter, setButtonFilter] = useState([]);
   const [clickedFilter, setClickedFilter] = useState('');
-  const [inProgressRecipes, setInProgressRecipes] = useState({
-    drinks: {
-      // 15997: '',
-      // 17203: '', // criei as chaves fixas para testar a lógica de renderizar o botão. se existir uma key compatível com o id da receita nesse obj, deve-se renderizar o botão de continue recipe e não start recipe
-      // 17222: '',
-    },
-    meals: {
-      // 52802: '',
-      // 52804: '',
-      // 52977: '',
-      // 53026: '',
-    },
-  });
+
   // começo da logica da 34 - LocalStorage FavoriteRecipes
 
   // const [favorite, setFavorite] = useState([]);
@@ -102,6 +90,10 @@ function MyProvider({ children }) {
   };
 
   const handleLoginButton = useCallback(() => {
+    localStorage.setItem('inProgressRecipes', JSON.stringify({
+      meals: {},
+      drinks: {},
+    }));
     setLocalStorage('user', {
       email: login.email,
     });
@@ -129,8 +121,6 @@ function MyProvider({ children }) {
       handleClickCategory,
       handleClickCat,
       setRecipes,
-      inProgressRecipes,
-      setInProgressRecipes,
     }),
     [
       login,
@@ -147,7 +137,6 @@ function MyProvider({ children }) {
       handleClickCategory,
       handleClickCat,
       handleLoginButton,
-      inProgressRecipes,
     ],
   );
 
