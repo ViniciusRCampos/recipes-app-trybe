@@ -25,7 +25,7 @@ export const getMealsFirst = async () => {
 export const getFirstTwo = async () => {
   const initial = await fetch('https://www.thecocktaildb.com/api/json/v1/1/search.php?s=');
   const response = await initial.json();
-  console.log('drinks', response);
+  // console.log('drinks', response);
   return response;
 };
 
@@ -89,7 +89,7 @@ export const recipeDrinks = async (id) => {
   const response = await fetch(`https://www.thecocktaildb.com/api/json/v1/1/lookup.php?i=${id}`);
   const data = await response.json();
   const results = [...data.drinks];
-  console.log(results, 'drinks API');
+  // console.log(results, 'drinks API');
   return results;
 };
 
