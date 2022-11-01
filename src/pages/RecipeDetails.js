@@ -157,16 +157,12 @@ function RecipeDetails() {
           </button>
           { copied && (<p>Link copied!</p>) }
           <button
-            data-testid="favorite-btn"
             type="button"
             checked={ favoriteList.some((element) => element.id === id) }
             onClick={ handleFavoriteClick }
-            src={ !favoriteList.some(
-              (element) => element.id === id,
-            ) ? whiteHeart : blackHeart }
-            alt="Favorite Icon"
           >
             <img
+              data-testid="favorite-btn"
               src={ !favoriteList.some(
                 (element) => element.id === id,
               ) ? whiteHeart : blackHeart }

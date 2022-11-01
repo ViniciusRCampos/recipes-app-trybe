@@ -29,8 +29,7 @@ function MyProvider({ children }) {
   const [favoriteStorage, setFavoriteStorage] = useState([]);
 
   const handleFavoriteClick = useMemo(() => (event) => {
-    console.log(event);
-    if (!event.target.checked) {
+    if (!event.currentTarget.checked) {
       addFavoriteRecipe(favorite);
     } else { removeFavoriteRecipe(favorite); }
     const updateFavorite = localStorage.getItem('favoriteRecipes');
