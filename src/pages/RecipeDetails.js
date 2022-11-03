@@ -70,7 +70,6 @@ function RecipeDetails() {
       return route.push(`${pathname}/in-progress`);
     }
     if (pathname.includes('/drinks')) {
-      // const sendRecipe = { [Number(id)]: [...ingredients] };
       const sendRecipe = { [Number(id)]: ingredients };
       localStorage.setItem('inProgressRecipes', JSON.stringify({
         ...local,
@@ -78,7 +77,6 @@ function RecipeDetails() {
       }));
       return route.push(`${pathname}/in-progress`);
     }
-    // const sendRecipe = { [Number(id)]: [...ingredients] };
     const sendRecipe = { [Number(id)]: ingredients };
     localStorage.setItem('inProgressRecipes', JSON.stringify({
       ...local,
