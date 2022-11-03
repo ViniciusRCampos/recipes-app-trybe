@@ -58,7 +58,8 @@ function RecipeDetails() {
   }, [id]);
 
   const onClickStartOrContinue = () => {
-    const ingredients = ingredientMesure().map((e) => Object.values(e)[0]);
+    const ingredients = ingredientMesure().map((e) => ({
+      ing: Object.values(e)[0], check: false }));
     const local = JSON.parse(localStorage.getItem('inProgressRecipes')) ?? {
       meals: {},
       drinks: {},
@@ -69,14 +70,16 @@ function RecipeDetails() {
       return route.push(`${pathname}/in-progress`);
     }
     if (pathname.includes('/drinks')) {
-      const sendRecipe = { [Number(id)]: [...ingredients] };
+      // const sendRecipe = { [Number(id)]: [...ingredients] };
+      const sendRecipe = { [Number(id)]: ingredients };
       localStorage.setItem('inProgressRecipes', JSON.stringify({
         ...local,
         drinks: { ...local.drinks, ...sendRecipe },
       }));
       return route.push(`${pathname}/in-progress`);
     }
-    const sendRecipe = { [Number(id)]: [...ingredients] };
+    // const sendRecipe = { [Number(id)]: [...ingredients] };
+    const sendRecipe = { [Number(id)]: ingredients };
     localStorage.setItem('inProgressRecipes', JSON.stringify({
       ...local,
       meals: { ...local.meals, ...sendRecipe },

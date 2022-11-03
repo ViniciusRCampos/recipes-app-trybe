@@ -99,3 +99,7 @@
   margin: 0 auto;
   width: 300px;
 }
+
+.checkedIngredint {
+  text-decoration: line-through solid black;
+}
