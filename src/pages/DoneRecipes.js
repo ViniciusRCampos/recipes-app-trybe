@@ -34,7 +34,9 @@ function DoneRecipes() {
         <button
           type="button"
           data-testid="filter-by-all-btn"
-          onClick={ () => setArrRecipes(doneRecipes) }
+          onClick={ () => {
+            setArrRecipes(doneRecipes);
+          } }
         >
           All
         </button>
