@@ -5,7 +5,7 @@ import MyProvider from './context/myProvider';
 import Login from './pages/Login';
 import DoneRecipes from './pages/DoneRecipes';
 import Drinks from './pages/Drinks';
-import Favorites from './pages/Favorites';
+import FavoriteRecipes from './pages/FavoriteRecipes';
 import Meals from './pages/Meals';
 import Profile from './pages/Profile';
 import RecipeDetails from './pages/RecipeDetails';
