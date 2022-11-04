@@ -106,6 +106,7 @@ function MyProvider({ children }) {
   const context = useMemo(
     () => ({
       favoriteStorage,
+      favorite,
       setFavorite,
       route,
       login,
@@ -130,6 +131,7 @@ function MyProvider({ children }) {
       setFavoriteStorage,
     }),
     [
+      favorite,
       setFavoriteStorage,
       handleFavoriteClick,
       favoriteStorage,
