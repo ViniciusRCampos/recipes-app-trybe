@@ -5,7 +5,7 @@ import MyProvider from './context/myProvider';
 import Login from './pages/Login';
 import DoneRecipes from './pages/DoneRecipes';
 import Drinks from './pages/Drinks';
-import Favorites from './pages/Favorites';
+import FavoriteRecipes from './pages/FavoriteRecipes';
 import Meals from './pages/Meals';
 import Profile from './pages/Profile';
 import RecipeDetails from './pages/RecipeDetails';
@@ -34,7 +34,7 @@ function App() {
           />
           <Route exact path="/profile" render={ () => <Profile /> } />
           <Route exact path="/done-recipes" render={ () => <DoneRecipes /> } />
-          <Route exact path="/favorite-recipes" render={ () => <Favorites /> } />
+          <Route exact path="/favorite-recipes" render={ () => <FavoriteRecipes /> } />
         </Switch>
       </MyProvider>
     </BrowserRouter>
