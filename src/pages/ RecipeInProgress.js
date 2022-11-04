@@ -1,19 +1,32 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { useHistory } from 'react-router';
+import MyContext from '../context/myContext';
 import Header from '../components/Header';
 import { recipeDrinks, recipeMeals } from '../helpers/Api';
+import whiteHeart from '../images/whiteHeartIcon.svg';
+import blackHeart from '../images/blackHeartIcon.svg';
+import shareIcon from '../images/shareIcon.svg';
+
+const copy = require('clipboard-copy');
 
 export default function RecipeInProgress() {
   const { location: { pathname } } = useHistory();
+  const route = useHistory();
   const [recipe, setRecipe] = useState({});
+  const [enable, setEnable] = useState(true);
+  // const [doneRecipe, setDoneRecipe] = useState({});
+
+  const { favorite, setFavorite, favoriteStorage, setFavoriteStorage,
+    handleFavoriteClick } = useContext(MyContext);
+  const [copied, setCopied] = useState(false);
+  const [favoriteList, setFavoriteList] = useState([]);
 
   const type = pathname.includes('meals') ? 'meals' : 'drinks';
   const id = pathname.split('/')[2];
   let fillDoing = true;
 
   const local = JSON.parse(localStorage.getItem('inProgressRecipes')) ?? {
-    meals: {},
-    drinks: {},
+    meals: {}, drinks: {},
   };
 
   let doing = [];
@@ -57,8 +70,18 @@ export default function RecipeInProgress() {
         recipeData = await recipeDrinks(id);
       }
       setRecipe(recipeData[0]);
+      setFavorite({
+        id,
+        type: type.replace('s', ''),
+        nationality: recipeData[0].strArea || '',
+        category: recipeData[0].strCategory,
+        alcoholicOrNot: recipeData[0].strAlcoholic || '',
+        name: recipeData[0].strMeal || recipeData[0].strDrink,
+        image: recipeData[0].strMealThumb || recipeData[0].strDrinkThumb,
+      });
     };
     result();
+    setFavoriteStorage(JSON.parse(localStorage.getItem('favoriteRecipes')));
   }, []);
 
   const handleCheck = (eventE, index) => {
@@ -69,22 +92,33 @@ export default function RecipeInProgress() {
     doing[index].check = !doing[index].check;
 
     saveCheck(doing);
-  };
-  /*
-  const putClass = (index) => {
-    if (doing[index].check === undefined) {
-      return '';
-    }
-    return 'checkedIngredint';
+    setEnable(!doing.every((ing) => ing.check === true));
   };
 
-  const putCheck = (index) => {
-    if (doing[index].check === undefined) {
-      return false;
+  useEffect(() => {
+    setFavoriteList(favoriteStorage);
+  }, [favoriteStorage]);
+
+  const putTags = () => {
+    if (recipe.strTags === null) {
+      return [];
     }
-    return doing[index].check;
+    return recipe.strTags.split(',') || [];
   };
-  */
+
+  const handleDone = () => {
+    const doneRecipesStorage = localStorage.getItem('doneRecipes') || [];
+    localStorage.setItem(
+      'doneRecipes',
+      JSON.stringify([...doneRecipesStorage, {
+        ...favorite,
+        tags: putTags(),
+        doneDate: new Date().toJSON(),
+      }]),
+    );
+    route.push('/done-recipes');
+  };
+
   return (
     <>
       <Header title="Recipe in progress" />
@@ -96,8 +130,32 @@ export default function RecipeInProgress() {
       <h3 data-testid="recipe-title">
         { recipe.strMeal || recipe.strDrink }
       </h3>
-      <button data-testid="share-btn" type="button">Share</button>
-      <button data-testid="favorite-btn" type="button">Favorite</button>
+      <div>
+        <button
+          data-testid="share-btn"
+          type="button"
+          onClick={ () => {
+            copy(`http://localhost:3000/${type}/${id}`);
+            setCopied(true);
+          } }
+        >
+          <img src={ shareIcon } alt="share icon" />
+        </button>
+        { copied && (<p>Link copied!</p>) }
+        <button
+          type="button"
+          checked={ favoriteList.some((element) => element.id === id) }
+          onClick={ handleFavoriteClick }
+        >
+          <img
+            data-testid="favorite-btn"
+            src={ !favoriteList.some(
+              (element) => element.id === id,
+            ) ? whiteHeart : blackHeart }
+            alt="Favorite Icon"
+          />
+        </button>
+      </div>
       <p data-testid="recipe-category">
         { type === 'drinks'
           ? recipe.strAlcoholic
@@ -123,7 +181,14 @@ export default function RecipeInProgress() {
         ))
       }
       <p data-testid="instructions">{ recipe.strInstructions}</p>
-      <button data-testid="finish-recipe-btn" type="button">Finish</button>
+      <button
+        data-testid="finish-recipe-btn"
+        type="button"
+        disabled={ enable }
+        onClick={ handleDone }
+      >
+        Finish
+      </button>
     </>
   );
 }
