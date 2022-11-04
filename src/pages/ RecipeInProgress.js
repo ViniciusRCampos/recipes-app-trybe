@@ -59,7 +59,7 @@ export default function RecipeInProgress() {
       setRecipe(recipeData[0]);
     };
     result();
-  }, []);
+  }, [id, type]);
 
   const handleCheck = (eventE, index) => {
     eventE.nativeEvent.path[1]

@@ -8,7 +8,7 @@ import SearchBar from '../components/SearchBar';
 
 describe('If component Login works properly', () => {
   it('Check login functions', async () => {
-    const { history } = renderWithRouter(<App />);
+    renderWithRouter(<App />);
     const login = screen.getByRole('textbox', {
       name: /email:/i,
     });
