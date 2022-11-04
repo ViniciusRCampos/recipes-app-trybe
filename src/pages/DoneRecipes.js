@@ -47,7 +47,7 @@ function DoneRecipes() {
             setArrRecipes(arrRecipes.filter((e) => e.type === 'meal'));
           } }
         >
-          Meal
+          Meals
         </button>
         <button
           type="button"

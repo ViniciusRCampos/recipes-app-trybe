@@ -88,7 +88,6 @@ export const recipeMeals = async (id) => {
 export const recipeDrinks = async (id) => {
   const response = await fetch(`https://www.thecocktaildb.com/api/json/v1/1/lookup.php?i=${id}`);
   const data = await response.json();
-  console.log(data);
   const results = [...data.drinks];
   // console.log(results, 'drinks API');
   return results;
