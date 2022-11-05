@@ -82,7 +82,7 @@ export default function RecipeInProgress() {
     };
     result();
     setFavoriteStorage(JSON.parse(localStorage.getItem('favoriteRecipes')));
-  }, []);
+  }, [id, type, setFavorite, setFavoriteStorage]);
 
   const handleCheck = (eventE, index) => {
     eventE.nativeEvent.path[1]

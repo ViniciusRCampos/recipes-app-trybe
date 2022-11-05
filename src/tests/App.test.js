@@ -17,8 +17,17 @@ describe('If component Login works properly', () => {
 
     expect(btn).toBeDisabled();
     userEvent.type(login, 'teste@teste.com');
-    userEvent.type(password, '123456');
-    expect(await password.value).toHaveLength(6);
+    userEvent.type(password, '1234567');
+    expect(await password.value).toHaveLength(7);
+    const button = screen.getByTestId('login-submit-btn');
+    userEvent.click(button);
+
+    const localStorageLogin = window.localStorage.getItem('user');
+    const localStorageProgress = window.localStorage.getItem('inProgressRecipes');
+
+    expect(JSON.parse(localStorageLogin).email).toBe('teste@teste.com');
+    expect(JSON.parse(localStorageProgress)).toEqual({ meals: {}, drinks: {},
+    });
   });
 });
 
