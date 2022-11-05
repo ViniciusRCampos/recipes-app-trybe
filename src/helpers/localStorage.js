@@ -20,7 +20,6 @@ function addFavoriteRecipe(recipe) {
 }
 function removeFavoriteRecipe(recipes) {
   const favorite = JSON.parse(localStorage.getItem('favoriteRecipes'));
-  console.log(favorite, 'remove');
   saveFavoriteRecipe(favorite.filter((recipe) => recipe.id !== recipes.id));
 }
 
