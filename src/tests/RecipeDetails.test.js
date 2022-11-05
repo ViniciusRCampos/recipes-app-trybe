@@ -97,7 +97,7 @@ describe('Check if Recipes is working properly', () => {
     // Por algum motivo o Click no ShareBtn trava o teste
 
     // userEvent.click(shareBtn);
-    // const link = await screen.findByText(/link copied!/i);
+    // const link = screen.queryByText(/link copied!/i);
     // expect(link).toBeInTheDocument();
 
     const favoriteBtn = screen.getByRole('img', {

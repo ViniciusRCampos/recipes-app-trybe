@@ -30,8 +30,6 @@ describe('Check if DoneRecipes is working properly', () => {
       name: /all/i,
     });
 
-    const test = window.localStorage.getItem('doneRecipes');
-    console.log(test);
     expect(title).toBeInTheDocument();
     expect(mealsButton).toBeInTheDocument();
     expect(drinksButton).toBeInTheDocument();

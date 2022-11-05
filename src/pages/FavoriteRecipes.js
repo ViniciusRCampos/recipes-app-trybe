@@ -1,9 +1,24 @@
 import React, { useEffect, useState } from 'react';
 import Header from '../components/Header';
+import shareIcon from '../images/shareIcon.svg';
+import blackHeart from '../images/blackHeartIcon.svg';
+import { removeFavoriteRecipe } from '../helpers/localStorage';
+
+const copy = require('clipboard-copy');
 
 function FavoriteRecipes() {
   const [arrFavorites, setArrFavorites] = useState([]);
   const [favoriteRecipes, setFavoriteRecipes] = useState([]);
+  const [copied, setCopied] = useState(false);
+
+  console.log(arrFavorites[0]);
+
+  const handleRemoveFavorite = (event) => {
+    const index = event.currentTarget.value;
+    removeFavoriteRecipe(arrFavorites[index]);
+    const local = JSON.parse(localStorage.getItem('favoriteRecipes')) ?? [];
+    setArrFavorites(local);
+  };
 
   useEffect(() => {
     const local = JSON.parse(localStorage.getItem('favoriteRecipes')) ?? [];
@@ -12,6 +27,7 @@ function FavoriteRecipes() {
     setFavoriteRecipes(local);
   }, []);
 
+  console.log(arrFavorites);
   return (
     <>
       <Header
@@ -47,28 +63,47 @@ function FavoriteRecipes() {
       {
         arrFavorites.map((e, i) => (
           <div key={ i }>
-            <img
-              src={ e.image }
-              alt="imagem receita"
-              data-testid={ `${i}-horizontal-image` }
-              width="300px"
-            />
+            <a href={ `/${e.type}s/${e.id}` }>
+              <img
+                src={ e.image }
+                alt="imagem receita"
+                data-testid={ `${i}-horizontal-image` }
+                width="150px"
+              />
+            </a>
+            <a href={ `/${e.type}s/${e.id}` }>
+              <p data-testid={ `${i}-horizontal-name` }>{ e.name }</p>
+            </a>
             <p data-testid={ `${i}-horizontal-top-text` }>{ e.category }</p>
-            <p data-testid={ `${i}-horizontal-name` }>{ e.name }</p>
+
+            <p data-testid={ `${i}-horizontal-top-text` }>
+              { `${e.nationality || e.alcoholicOrNot} - ${e.category}` }
+            </p>
 
             <button
               type="button"
-              data-testid={ `${i}-horizontal-share-btn` }
               onClick={ () => {
                 copy(`http://localhost:3000/${e.type}s/${e.id}`);
                 setCopied(true);
               } }
             >
-              compartilhar
+              <img
+                src={ shareIcon }
+                alt="Share Icon"
+                data-testid={ `${i}-horizontal-share-btn` }
+              />
             </button>
-            {/* { copied && (<p>Link copied!</p>) } */}
-            <button type="button" data-testid={ `${i}-horizontal-favorite-btn` }>
-              favoritar
+            { copied && (<p>Link copied!</p>) }
+            <button
+              type="button"
+              value={ i }
+              onClick={ handleRemoveFavorite }
+            >
+              <img
+                data-testid={ `${i}-horizontal-favorite-btn` }
+                src={ blackHeart }
+                alt="Favorite Icon"
+              />
             </button>
           </div>
         ))
