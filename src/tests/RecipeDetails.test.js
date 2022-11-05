@@ -127,5 +127,12 @@ describe('Check if Recipes is working properly', () => {
     ],
       } });
     expect(history.location.pathname).toBe('/drinks/15997/in-progress');
+
+    act(() => {
+      history.push('/drinks/15997');
+    });
+
+    const continueRecipe = screen.getByTestId('start-recipe-btn');
+    expect(continueRecipe).toHaveTextContent('Continue Recipe');
   });
 });

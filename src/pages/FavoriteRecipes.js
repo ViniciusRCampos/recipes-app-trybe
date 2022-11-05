@@ -28,14 +28,18 @@ function FavoriteRecipes() {
         <button
           type="button"
           data-testid="filter-by-meal-btn"
-          // onClick={  }
+          onClick={ () => {
+            setArrFavorites(arrFavorites.filter((e) => e.type === 'meal'));
+          } }
         >
           Meals
         </button>
         <button
           type="button"
           data-testid="filter-by-drink-btn"
-          // onClick={ }
+          onClick={ () => {
+            setArrFavorites(arrFavorites.filter((e) => e.type === 'drink'));
+          } }
         >
           Drinks
         </button>
